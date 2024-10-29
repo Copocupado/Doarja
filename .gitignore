@@ -1,0 +1,35 @@
+# Node modules
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build output
+dist/
+*.log
+
+# Local environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE and editor files
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Optional: If you use Jest for testing
+coverage/
+
+# Optional: If you use Storybook
+out/
+.storybook-out/
+
+# Temporary files
+temp/
+tmp/
+
