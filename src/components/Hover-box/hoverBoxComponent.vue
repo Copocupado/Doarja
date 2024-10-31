@@ -1,5 +1,5 @@
 <template>
-  <v-container class="hover-effect-col rounded-lg d-flex flex-column justify-center align-center" style="height: 100%;">
+  <v-container class="hover-effect-col rounded-lg d-flex flex-column justify-center align-center" style="height: 100%;" @click="click">
     <v-icon
       class="fill-height"
       :icon="icon"
@@ -15,13 +15,20 @@
     props: {
       icon: {
         type: String,
-        required: true,
+        required: false,
         default: 'mdi-shield-account-outline', // Default icon if none is provided
       },
       text: {
         type: String,
-        required: true,
+        required: false,
         default: 'Sou administrador', // Default text if none is provided
+      },
+      click: {
+        type: Function,
+        required: false,
+        default: () => {
+          console.log('clicado!')
+        },
       },
     },
   }

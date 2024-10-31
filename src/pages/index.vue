@@ -23,17 +23,40 @@
       </v-col>-->
       <v-col class="text-center text-h5 text-secondary font-weight-medium flex-grow-0">Escolha o que melhor te descreve</v-col>
       <v-row>
-        <v-col cols="12" sm="4"><HoverBoxComponent /></v-col>
-        <v-col cols="12" sm="4"><HoverBoxComponent icon="mdi-hand-heart-outline" text="Sou uma entidade" /></v-col>
-        <v-col cols="12" sm="4"><HoverBoxComponent icon="mdi-account-search" text="Procuro doações" /></v-col>
+        <v-col cols="12" sm="4"><HoverBoxComponent :click="()=>goTo('administrador')" /></v-col>
+        <v-col cols="12" sm="4"><HoverBoxComponent :click="()=>goTo('entidade')" icon="mdi-hand-heart-outline" text="Sou entidade" /></v-col>
+        <v-col cols="12" sm="4"><HoverBoxComponent :click="()=>goTo('search')" icon="mdi-account-search" text="Procuro doações" /></v-col>
       </v-row>
     </v-container>
   </div>
 </template>
 <script lang="ts" setup>
   import HoverBoxComponent from '@/components/Hover-box/hoverBoxComponent.vue'
+  import router from '@/router'
+  import { onMounted } from 'vue'
+  import axios from 'axios'
 
-  //
+  function goTo (value: String) {
+    switch (value) {
+      case 'administrador':
+        router.push('/login')
+        break
+      case 'entidade':
+        router.push('/login')
+        break
+      default:
+        router.push('/search')
+    }
+  }
+
+  onMounted(async () => {
+    console.log('booting database...')
+    try {
+      await axios.post('http://localhost/Doarja/src/backend/boot.php')
+    } catch (error) {
+      console.error('Error fetching data:', error)
+    }
+  })
 </script>
 <style>
 .responsive-background {
