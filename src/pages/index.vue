@@ -39,7 +39,7 @@
   function goTo (value: String) {
     switch (value) {
       case 'administrador':
-        router.push('/login')
+        router.push('/Admin/adminlogin')
         break
       case 'entidade':
         router.push('/login')

@@ -40,6 +40,7 @@
           block
           class="text-background bg-secondary"
           :disabled="!isValid"
+          :loading="isLoading"
           rounded="lg"
           size="x-large"
           type="submit"
@@ -47,13 +48,15 @@
         >
           Entrar
         </v-btn>
+        <v-container v-if="shouldShowErrorMessage" class="d-flex justify-center text-error font-weight-bold">Nenhum administrador encontrado com essas credencias.</v-container>
       </v-container>
     </v-container>
   </div>
 </template>
 <script lang="ts" setup>
-  import { ref } from 'vue'
+  import { ref, onMounted } from 'vue'
   import router from '@/router'
+  import axios from 'axios'
 
   const show = ref(false)
 
@@ -62,9 +65,13 @@
   const email = ref('')
   const password = ref('')
 
+  const isLoading = ref(false)
+  const shouldShowErrorMessage = ref(false)
+
   const emailRules = [
     (value: string) => !!value || 'Email é obrigatório.',
     (value: string) => {
+      if (value === 'root') return true
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
       return emailPattern.test(value) || 'Email deve ser válido.'
     },
@@ -74,11 +81,51 @@
     (value: string) => !!value || 'Senha é obrigatória.',
   ]
 
-  function onSubmit () {
+  onMounted(async () => {
+    const response = await axios.get('http://localhost/Doarja/src/backend/DAOs/adminDAO.php', {
+      params: {
+        action: 'isUserAdmin',
+      },
+    })
+    console.log(response.data)
+  })
+
+  async function onSubmit () {
     if (isValid.value) {
-      console.log('lessgoo')
-    } else {
-      console.log('notgoo')
+      isLoading.value = true
+      try {
+        const response = await axios.get('http://localhost/Doarja/src/backend/DAOs/adminDAO.php', {
+          params: {
+            action: 'getAdmin',
+            email: email.value,
+            password: password.value,
+          },
+        })
+        const admin = response.data
+        if (admin == null) {
+          shouldShowErrorMessage.value = true
+          setTimeout(() => {
+            shouldShowErrorMessage.value = false
+          }, 3000)
+        } else {
+          try {
+            const response = await axios.post('http://localhost/Doarja/src/backend/SessionManager.php', {
+              action: 'saveSessionData',
+              data: { role: 'admin', ...admin },
+            }, {
+              withCredentials: true,
+            })
+            console.log(response.data)
+          } catch (error) {
+            console.error('Error saving session data:', error)
+          } finally {
+            router.push('/')
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error)
+      }
+      isLoading.value = false
     }
   }
 </script>
