@@ -54,9 +54,10 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { ref, onMounted } from 'vue'
+  import { onMounted, ref } from 'vue'
   import router from '@/router'
   import axios from 'axios'
+  import { getAdmin, isUserAdmin, saveSessionData } from '@/models/Admin'
 
   const show = ref(false)
 
@@ -82,51 +83,41 @@
   ]
 
   onMounted(async () => {
-    const response = await axios.get('http://localhost/Doarja/src/backend/DAOs/adminDAO.php', {
-      params: {
-        action: 'isUserAdmin',
-      },
-    })
-    console.log(response.data)
+    if (await isUserAdmin()) {
+      console.log('user already logged in as admin, redirecting...')
+    } else {
+      console.log('user not logged in, taking no further action')
+    }
   })
 
   async function onSubmit () {
-    if (isValid.value) {
-      isLoading.value = true
-      try {
-        const response = await axios.get('http://localhost/Doarja/src/backend/DAOs/adminDAO.php', {
-          params: {
-            action: 'getAdmin',
-            email: email.value,
-            password: password.value,
-          },
-        })
-        const admin = response.data
-        if (admin == null) {
-          shouldShowErrorMessage.value = true
-          setTimeout(() => {
-            shouldShowErrorMessage.value = false
-          }, 3000)
-        } else {
-          try {
-            const response = await axios.post('http://localhost/Doarja/src/backend/SessionManager.php', {
-              action: 'saveSessionData',
-              data: { role: 'admin', ...admin },
-            }, {
-              withCredentials: true,
-            })
-            console.log(response.data)
-          } catch (error) {
-            console.error('Error saving session data:', error)
-          } finally {
-            router.push('/')
+    if (!isValid.value) return
+
+    isLoading.value = true
+    try {
+      const admin = await getAdmin(email.value, password.value)
+      if (admin == null) {
+        shouldShowErrorMessage.value = true
+        setTimeout(() => {
+          shouldShowErrorMessage.value = false
+        }, 3000)
+      } else {
+        try {
+          if (await saveSessionData(admin)) {
+            console.log('Users credentilas saved successfully')
+          } else {
+            console.log('Failed to save user credentials')
           }
+        } catch (error) {
+          console.error('Error saving session data:', error)
+        } finally {
+          router.push('/')
         }
-      } catch (error) {
-        console.error('Error fetching data:', error)
       }
-      isLoading.value = false
+    } catch (error) {
+      console.error('Error fetching data:', error)
     }
+    isLoading.value = false
   }
 </script>
 <style scoped>

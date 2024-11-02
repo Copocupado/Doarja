@@ -14,7 +14,7 @@
         if ($result) {
             return $result->fetch_all(MYSQLI_ASSOC);
         } else {
-            return "Error: " . $conn->error;
+            return [];
         }
     }
     function verifyPasswords($hashedPassword, $password){

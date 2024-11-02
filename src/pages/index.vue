@@ -34,7 +34,7 @@
   import HoverBoxComponent from '@/components/Hover-box/hoverBoxComponent.vue'
   import router from '@/router'
   import { onMounted } from 'vue'
-  import axios from 'axios'
+  import { bootDatabase } from '@/models/utility_classes'
 
   function goTo (value: String) {
     switch (value) {
@@ -50,13 +50,14 @@
   }
 
   onMounted(async () => {
-    console.log('booting database...')
-    try {
-      await axios.post('http://localhost/Doarja/src/backend/boot.php')
-    } catch (error) {
-      console.error('Error fetching data:', error)
+    const response = await bootDatabase()
+    if (response === 'failure') {
+      console.log('failed to connect to db')
+    } else {
+      console.log('successfully connected to the db')
     }
   })
+
 </script>
 <style>
 .responsive-background {
