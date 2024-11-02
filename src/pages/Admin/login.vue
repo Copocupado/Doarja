@@ -56,8 +56,7 @@
 <script lang="ts" setup>
   import { onMounted, ref } from 'vue'
   import router from '@/router'
-  import axios from 'axios'
-  import { getAdmin, isUserAdmin, saveSessionData } from '@/models/Admin'
+  import { getAdmin, isUserAdmin, saveSessionData } from '@/models/admin'
 
   const show = ref(false)
 
@@ -111,7 +110,7 @@
         } catch (error) {
           console.error('Error saving session data:', error)
         } finally {
-          router.push('/')
+          router.push('/Admin/dashboard')
         }
       }
     } catch (error) {

@@ -13,7 +13,7 @@
         switch ($_GET['action']) {
             case 'getSessionData':
                 $data = getSessionData();
-                echo json_encode(['success' => true, 'data' => $data]);
+                echo json_encode($data);
                 break;
         }
     }
@@ -23,6 +23,10 @@
             case 'saveSessionData':
                 saveSessionData($requestData['data']);
                 echo json_encode(['success' => true, 'message' => 'Data saved successfully.']);
+                break;
+            case 'destroySession':
+                destroySession();
+                echo json_encode(['success' => true, 'message' => 'Session destroyed.']);
                 break;
             default:
                 echo json_encode(['success' => false, 'message' => 'Invalid action for POST request.']);
@@ -36,5 +40,11 @@
 
     function getSessionData() {
         return $_SESSION['data'] ?? null;
+    }
+
+    function destroySession() {
+        $_SESSION['data'] = null;
+        session_unset();
+        session_destroy();
     }
 ?>

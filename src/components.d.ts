@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     AppFooter: typeof import('./components/AppFooter.vue')['default']
     HoverBoxComponent: typeof import('./components/Hover-box/hoverBoxComponent.vue')['default']
+    Navbar: typeof import('./components/Navbar/Navbar.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

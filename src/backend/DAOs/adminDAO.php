@@ -45,8 +45,10 @@
     }
 
     function isUserAdmin() {
-        $reponse = getSessionData();
-
-        return $reponse['role'] == 'admin';
+        $response = getSessionData();
+        if($response == null){
+            return false;
+        }
+        return $response['role'] == 'admin';
     }
 ?>
