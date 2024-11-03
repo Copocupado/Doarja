@@ -71,7 +71,7 @@ async function saveSessionData (admin: object): Promise<boolean> {
 async function getAdmin (
   email: string,
   password: string
-): Promise<Object | null> {
+): Promise<object> {
   try {
     const response = await axios.get(
       'http://localhost/Doarja/src/backend/DAOs/adminDAO.php',
@@ -86,8 +86,95 @@ async function getAdmin (
     return response.data
   } catch (error) {
     console.error('Error fetching admin data:', error)
+    return {
+      success: false,
+      message: 'Nenhum administrador encontrado com essas credenciais',
+    }
+  }
+}
+
+async function getAllAdmins (): Promise<Array<Admin> | null> {
+  try {
+    const response = await axios.get(
+      'http://localhost/Doarja/src/backend/DAOs/adminDAO.php',
+      {
+        params: {
+          action: 'getAllAdmins',
+        },
+      }
+    )
+    const adminList = []
+    for (const item of response.data) {
+      adminList.push(new Admin(item.email, item.senha, item.nome, item.ativo, item.foto_de_perfil))
+    }
+    return adminList
+  } catch (error) {
+    console.error('Error fetching admin data:', error)
     return null
   }
 }
 
-export { isUserAdmin, saveSessionData, getAdmin, Admin }
+async function addAdmin (admin: Admin): Promise<object> {
+  try {
+    const response = await axios.post(
+      'http://localhost/Doarja/src/backend/DAOs/adminDAO.php',
+      {
+        action: 'addAdmin',
+        data: admin,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true,
+      }
+    )
+    return response.data
+  } catch (error) {
+    return { success: false, message: error }
+  }
+}
+
+async function deleteAdmin (admin: Admin): Promise<object> {
+  try {
+    const response = await axios.post(
+      'http://localhost/Doarja/src/backend/DAOs/adminDAO.php',
+      {
+        action: 'deleteAdmin',
+        data: admin,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true,
+      }
+    )
+    return response.data
+  } catch (error) {
+    return { success: false, message: error }
+  }
+}
+
+async function updateAdmin (admin: Admin): Promise<object> {
+  try {
+    const response = await axios.post(
+      'http://localhost/Doarja/src/backend/DAOs/adminDAO.php',
+      {
+        action: 'updateAdmin',
+        data: admin,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true,
+      }
+    )
+    return response.data
+  } catch (error) {
+    return { success: false, message: error }
+  }
+}
+
+export { Admin, isUserAdmin, saveSessionData, getAdmin, getAllAdmins, addAdmin, deleteAdmin, updateAdmin }

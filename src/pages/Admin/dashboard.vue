@@ -1,27 +1,20 @@
 <template>
-  <v-app class="bg-background">
+  <v-app v-if="admin != null" class="bg-background">
     <v-row no-gutters>
       <v-col cols="2">
         <Navbar
-          v-if="admin != null"
-          selected-section="first"
+          :selected-section="selectedSection"
           :user-main-info="admin.nome"
           :user-pfp="admin.foto_de_perfil"
           :user-secondary-info="admin.email"
+          @update-section="updateSection"
         />
       </v-col>
 
       <v-col class="py-12 px-12" cols="10">
         <v-container class="d-flex flex-column no-padding" style="height: 100%; max-height: 100%;">
-          <div class="loadingContainer">
-            <v-container class="d-flex justify-center align-center" style="height: 100%;">
-              <v-progress-circular
-                color="blue-lighten-3"
-                indeterminate
-                :size="60"
-                :width="5"
-              />
-            </v-container>
+          <div style="height: 100%; max-height: 100%;">
+            <component :is="currentComponent" :currentlyAuthedAdmin="admin" />
           </div>
         </v-container>
       </v-col>
@@ -30,8 +23,9 @@
   </v-app>
 </template>
 
-<script setup>
+<script lang="ts" setup>
   import Navbar from '@/components/Navbar/Navbar.vue'
+  import AdminTable from '@/components/CRUD_Administradores/table.vue'
 
   import { onMounted, ref } from 'vue'
   import router from '@/router'
@@ -39,6 +33,22 @@
   import { Admin } from '@/models/admin'
 
   const admin = ref(null)
+
+  const selectedSection = ref('administradores')
+
+  function updateSection (newSection: string) {
+    selectedSection.value = newSection
+  }
+
+  const currentComponent = computed(() => {
+    console.log('called')
+    switch (selectedSection.value) {
+      case 'administradores':
+        return AdminTable
+      default:
+        return ''
+    }
+  })
 
   onMounted(async () => {
     const response = await getSessionData()

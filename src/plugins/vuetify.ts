@@ -46,7 +46,7 @@ const myCustomLightTheme = {
     'theme-on-kbd': '#FFFFFF',
     'theme-code': '#F5F5F5',
     'theme-on-code': '#000000',
-  }
+  },
 }
 
 export default createVuetify({

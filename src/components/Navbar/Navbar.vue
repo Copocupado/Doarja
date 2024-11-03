@@ -1,7 +1,8 @@
 <template>
-  <v-navigation-drawer class="bg-secondary" expand-on-hover permanent rail>
+  <v-navigation-drawer class="bg-primary" expand-on-hover permanent rail>
     <v-list style="height: 6%;">
       <v-list-item
+        class="text-background"
         :prepend-avatar="userPfp"
         :subtitle="userSecondaryInfo"
         :title="userMainInfo"
@@ -13,70 +14,20 @@
     <v-list nav style="display: flex; flex-direction:column; justify-content: space-between; height:93.8%;">
       <div>
         <v-list-item
-          :class="{ 'v-list-item--active': selectedSection === 'Duvidas Frequentes' }"
-          prepend-icon="mdi-frequently-asked-questions"
-          title="Dúvidas frequentes"
-          value="myfiles"
-          @click="selectSection('Duvidas Frequentes')"
-        />
-        <v-list-item
-          :class="{ 'v-list-item--active': selectedSection === 'noticias' }"
-          prepend-icon="mdi-newspaper"
-          title="Notícias"
-          value="noticias"
-          @click="selectSection('noticias')"
-        />
-        <v-list-item
-          :class="{ 'v-list-item--active': selectedSection === 'bazar-solidario' }"
-          prepend-icon="mdi-gift"
-          title="Bazar solidário"
-          value="bazar-solidario"
-          @click="selectSection('bazar-solidario')"
-        />
-        <v-list-item
-          :class="{ 'v-list-item--active': selectedSection === 'novidades-da-loja' }"
-          prepend-icon="mdi-tshirt-crew"
-          title="Novidades da loja"
-          value="novidades-da-loja"
-          @click="selectSection('novidades-da-loja')"
-        />
-        <v-list-item
-          :class="{ 'v-list-item--active': selectedSection === 'lojas-da-empresa' }"
-          prepend-icon="mdi-storefront-edit"
-          title="Lojas da Empresa"
-          value="lojas-da-empresa"
-          @click="selectSection('lojas-da-empresa')"
-        />
-        <v-list-item
-          :class="{ 'v-list-item--active': selectedSection === 'solicitacoes' }"
-          prepend-icon="mdi-checkbook"
-          title="Solicitações"
-          value="solicitacoes"
-          @click="selectSection('solicitacoes')"
-        />
-        <v-list-item
-          :class="{ 'v-list-item--active': selectedSection === 'credits' }"
-          prepend-icon="mdi-currency-brl"
-          title="Reverse Credits"
-          value="credits"
-          @click="selectSection('credits')"
-        />
-        <v-list-item
-          :class="{ 'v-list-item--active': selectedSection === 'entregas' }"
-          prepend-icon="mdi-truck-cargo-container"
-          title="Entregas"
-          value="entregas"
-          @click="selectSection('entregas')"
-        />
-        <v-list-item
-          :class="{ 'v-list-item--active': selectedSection === 'funcionarios' }"
-          prepend-icon="mdi-account-hard-hat"
-          title="Funcionários"
-          value="funcionarios"
-          @click="selectSection('funcionarios')"
+          v-for="item in menuItems"
+          :key="item.value"
+          :class="{
+            'text-background': true,
+            'v-list-item--active custom-active': selectedSection === item.value,
+          }"
+          :prepend-icon="item.icon"
+          :title="item.title"
+          :value="item.value"
+          @click="selectSection(item.value)"
         />
       </div>
       <v-list-item
+        class="text-background"
         prepend-icon="mdi-logout"
         title="Logout"
         value="Logout"
@@ -91,7 +42,7 @@
   import { logOut } from '@/models/utility_classes'
   import router from '@/router'
 
-  defineProps<{
+  const prop = defineProps<{
     userPfp: string;
     userMainInfo: string;
     userSecondaryInfo: string;
@@ -99,11 +50,16 @@
     selectedSection:string;
   }>()
 
-  const emit = defineEmits(['updateSection'])
+  const emit = defineEmits(['update-section'])
+
+  const menuItems = [
+    { title: 'Administradores', icon: 'mdi-account-hard-hat', value: 'administradores' },
+  ]
 
   // Method to select a section
   const selectSection = (section: string) => {
-    emit('updateSection', section)
+    // eslint-disable-next-line vue/custom-event-name-casing
+    emit('update-section', section)
   }
 
   const logUserOut = async () => {

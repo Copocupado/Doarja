@@ -28,9 +28,6 @@
                 destroySession();
                 echo json_encode(['success' => true, 'message' => 'Session destroyed.']);
                 break;
-            default:
-                echo json_encode(['success' => false, 'message' => 'Invalid action for POST request.']);
-                break;
         }
     }
 

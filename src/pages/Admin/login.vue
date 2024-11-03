@@ -48,7 +48,7 @@
         >
           Entrar
         </v-btn>
-        <v-container v-if="shouldShowErrorMessage" class="d-flex justify-center text-error font-weight-bold">Nenhum administrador encontrado com essas credencias.</v-container>
+        <v-container v-if="shouldShowErrorMessage" class="d-flex justify-center text-error font-weight-bold">{{ errorMessageText }}</v-container>
       </v-container>
     </v-container>
   </div>
@@ -67,6 +67,7 @@
 
   const isLoading = ref(false)
   const shouldShowErrorMessage = ref(false)
+  let errorMessageText = ''
 
   const emailRules = [
     (value: string) => !!value || 'Email é obrigatório.',
@@ -94,13 +95,15 @@
 
     isLoading.value = true
     try {
-      const admin = await getAdmin(email.value, password.value)
-      if (admin == null) {
+      const response = await getAdmin(email.value, password.value)
+      if (!(response.success)) {
+        errorMessageText = response.message
         shouldShowErrorMessage.value = true
         setTimeout(() => {
           shouldShowErrorMessage.value = false
         }, 3000)
       } else {
+        const admin = response.message
         try {
           if (await saveSessionData(admin)) {
             console.log('Users credentilas saved successfully')
