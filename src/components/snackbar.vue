@@ -17,13 +17,6 @@
 <script lang="ts" setup>
   import { defineProps } from 'vue'
 
-  const props = defineProps<{
-    snackbar: boolean,
-    snackbarColor: string,
-    snackbarText: string,
-    timeout?: Number
-  }>()
-
   const timeout = props.timeout || 5000
 
   watch(() => props.snackbar, newVal => {
@@ -36,5 +29,12 @@
   // eslint-disable-next-line func-call-spacing
   const emit = defineEmits<{
     (e: 'close'): void
+  }>()
+
+  const props = defineProps<{
+    snackbar: boolean,
+    snackbarColor: string,
+    snackbarText: string,
+    timeout?: Number
   }>()
 </script>

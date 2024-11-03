@@ -14,6 +14,7 @@ declare module 'vue' {
     CRUD_administradores: typeof import('./components/CRUD_administradores/CRUD_administradores.vue')['default']
     CRUD_funcionarios: typeof import('./components/CRUD_administradores/CRUD_funcionarios.vue')['default']
     HoverBoxComponent: typeof import('./components/Hover-box/hoverBoxComponent.vue')['default']
+    LocationPickerComponent: typeof import('./components/locationPickerComponent.vue')['default']
     Navbar: typeof import('./components/Navbar/Navbar.vue')['default']
     OptionsAdmins: typeof import('./components/CRUD_Administradores/optionsAdmins.vue')['default']
     OptionsFuncionarios: typeof import('./components/CRUD_Administradores/optionsFuncionarios.vue')['default']

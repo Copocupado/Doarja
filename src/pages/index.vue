@@ -42,7 +42,7 @@
         router.push('/Admin/login')
         break
       case 'entidade':
-        router.push('/login')
+        router.push('/Entidade/login')
         break
       default:
         router.push('/search')
