@@ -16,7 +16,7 @@ import { createVuetify } from 'vuetify'
 const myCustomLightTheme = {
   dark: false,
   colors: {
-    background: '#ccc5b9',
+    background: '#ccc5b9a9',
     surface: '#FFFFFF',
     'surface-bright': '#FFFFFF',
     'surface-light': '#E0E0E0',

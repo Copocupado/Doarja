@@ -4,7 +4,7 @@
     class="text-primary"
     clearable
     color="primary"
-    label="Digite um endereço"
+    label="Digite o local"
     :model-value="address"
     :rules="addressRules"
     variant="outlined"
@@ -48,6 +48,3 @@
     (value: string) => (value.length <= 100) || 'O endereço deve ter no máximo 100 caracteres.', // Maximum length
   ]
 </script>
-
-<style>
-</style>

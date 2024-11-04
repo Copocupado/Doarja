@@ -13,6 +13,7 @@
     "core-js": "^3.37.1",
     "Doarja": "file:",
     "roboto-fontface": "*",
+    "v-mask": "^2.3.0",
     "vue": "^3.4.31",
     "vue-location-picker": "^1.0.1",
     "vuetify": "^3.6.11"

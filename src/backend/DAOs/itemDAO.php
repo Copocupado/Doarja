@@ -7,7 +7,7 @@ header("Content-Type: application/json");
 
 include_once __DIR__ . '/../baseDAO.php';
 
-$adminDAO = new AdminDAO();
+$itemDAO = new itemDAO();
 
 $jsonData = file_get_contents('php://input');
 $requestData = json_decode($jsonData, true);
@@ -22,7 +22,7 @@ if (isset($getAction)) {
 
     switch ($getAction) {
         case 'read':
-            $response = getAdmin($getData);
+            $response = getAllitems($getData);
             echo json_encode($response);
             break;
 
@@ -32,7 +32,7 @@ if (isset($getAction)) {
             break;
 
         case 'fetchAll':
-            $response = getAllAdmins();
+            $response = getAllitems($getData);
             echo json_encode($response);
             break;
 
@@ -48,58 +48,51 @@ if (isset($getAction)) {
 if (isset($postAction)) {
     switch ($postAction) {
         case 'create':
-            $response = addAdmin($postData);
+            $response = addItem($postData);
             echo json_encode($response);
             break;
         case 'delete':
-            $response = deleteAdmin($postData);
+            $response = deleteItem($postData);
             echo json_encode($response);
             break;
         case 'update':
-            $response = updateAdmin($postData);
+            $response = updateItem($postData);
             echo json_encode($response);
             break;
     }
 }
 
-function getAdmin($admin)
+function getItem($item)
 {
-    global $adminDAO;
+    global $itemDAO;
 
     try {
-        $password = $admin['senha'];
-        unset($admin['senha']);
+        $password = $item['senha'];
+        unset($item['senha']);
 
-        $response = $adminDAO->read($admin);
+        $response = $itemDAO->read($item);
 
         if (!$response['success'])
             return $response;
 
-        $adminList = $response['message'];
+        $itemList = $response['message'];
 
-        if (empty($adminList)) {
+        if (empty($itemList)) {
             return [
                 'success' => false,
-                'message' => 'Nenhum administrador encontrado com essas credenciais'
+                'message' => 'Nenhuma item encontrada com essas credenciais'
             ];
         }
 
-        $admin = $adminList[0];
+        $item = $itemList[0];
 
-        $response = verifyPasswords($admin['senha'], $password);
+        $response = verifyPasswords($item['senha'], $password);
         if (!$response['success'])
             return $response;
-
-        if ($admin['ativo'] == 0) {
-            return [
-                'success' => false,
-                'message' => 'Sua conta está desativada, tente novamente mais tarde'
-            ];
-        }
 
         return [
             'success' => true,
-            'message' => $admin
+            'message' => $item
         ];
     } catch (\Throwable $th) {
         return [
@@ -111,87 +104,80 @@ function getAdmin($admin)
 
 function isItem()
 {
-    global $adminDAO;
+    global $itemDAO;
 
     try {
-        return $adminDAO->isItem();
+        return $itemDAO->isItem();
     } catch (\Throwable $th) {
         return [
             'success' => false,
-            'message' => 'Falha ao verificar se o usuário é um admin: ' . $th->getMessage(),
+            'message' => 'Falha ao verificar se o usuário é um item: ' . $th->getMessage(),
         ];
     }
 }
 
-function getAllAdmins()
+function getAllItems($item)
 {
-    global $adminDAO;
+    global $itemDAO;
     try {
-        return $adminDAO->fetchAll();
+        return $itemDAO->read($item);
     } catch (\Throwable $th) {
         return [
             'success' => false,
-            'message' => 'Erro ao obter todos os admins: ' . $th->getMessage(),
+            'message' => 'Erro ao obter todos os items: ' . $th->getMessage(),
         ];
     }
 }
 
-function addAdmin($admin)
+function addItem($item)
 {
-    global $adminDAO;
-
+    global $itemDAO;
     try {
 
-        if (isset($admin['senha'])) {
-            $admin['senha'] = password_hash($admin['senha'], PASSWORD_BCRYPT);
+        if (isset($item['senha'])) {
+            $item['senha'] = password_hash($item['senha'], PASSWORD_BCRYPT);
         } else {
             return [
                 'success' => false,
-                'message' => 'Administrador deve conter senha'
+                'message' => 'Item deve conter senha'
             ];
         }
 
-        $admin['ativo'] = isset($admin['ativo']) && $admin['ativo'] ? 1 : 0;
-
-        return $adminDAO->create($admin);
-
+        unset($item['id']);
+        return $itemDAO->create($item);
     } catch (\Throwable $th) {
         return [
             'success' => false,
-            'message' => 'Falha ao adicionar o administrador: ' . $th->getMessage(),
+            'message' => 'Falha ao adicionar a item: ' . $th->getMessage(),
         ];
     }
 }
-function deleteAdmin($admin)
+function deleteItem($item)
 {
-    global $adminDAO;
+    global $itemDAO;
     try {
 
-        $admin['ativo'] = isset($admin['ativo']) && $admin['ativo'] == 'Ativado' ? 1 : 0;
-
-        return $adminDAO->delete($admin);
+        return $itemDAO->delete($item);
 
     } catch (\Throwable $th) {
         return [
             'success' => false,
-            'message' => 'Falha ao excluir o administrador: ' . $th->getMessage(),
+            'message' => 'Falha ao excluir a item: ' . $th->getMessage(),
         ];
     }
 }
 
-function updateAdmin($admin)
+function updateItem($item)
 {
-    global $adminDAO;
+    global $itemDAO;
     try {
 
-        $admin['ativo'] = isset($admin['ativo']) && $admin['ativo'] ? 1 : 0;
-
-        return $adminDAO->update($admin);
+        return $itemDAO->update($item);
 
     } catch (\Throwable $th) {
         return [
             'success' => false,
-            'message' => 'Falha ao atualizar o administrador: ' . $th->getMessage(),
+            'message' => 'Falha ao atualizar a item: ' . $th->getMessage(),
         ];
     }
 }

@@ -48,13 +48,10 @@
     userSecondaryInfo: string;
 
     selectedSection:string;
+    menuItems: Array<Object>;
   }>()
 
   const emit = defineEmits(['update-section'])
-
-  const menuItems = [
-    { title: 'Administradores', icon: 'mdi-account-hard-hat', value: 'administradores' },
-  ]
 
   // Method to select a section
   const selectSection = (section: string) => {

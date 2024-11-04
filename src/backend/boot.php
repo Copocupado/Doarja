@@ -22,18 +22,53 @@ if ($conn->connect_error) {
 $conn->query("CREATE SCHEMA IF NOT EXISTS $banco");
 $conn->select_db($banco);
 
-$sql = "CREATE TABLE IF NOT EXISTS admins (
-            email VARCHAR(255) PRIMARY KEY,
-            senha VARCHAR(255) NOT NULL,
-            nome VARCHAR(255) NOT NULL,
-            ativo BOOLEAN NOT NULL,
-            foto_de_perfil VARCHAR(255) NOT NULL
-        )";
+$sql = "
+    CREATE TABLE IF NOT EXISTS admins (
+        email VARCHAR(255) PRIMARY KEY,
+        senha VARCHAR(255) NOT NULL,
+        nome VARCHAR(255) NOT NULL,
+        ativo BOOLEAN NOT NULL,
+        foto_de_perfil VARCHAR(255) NOT NULL
+    )
+";
 
 if ($conn->query($sql) !== TRUE) {
     $response["success"] = false;
     $response["message"] = "Erro ao criar a tabela 'admins': " . $conn->error;
-} else {
+} 
+
+$sql = "
+    CREATE TABLE IF NOT EXISTS entidades (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        nome VARCHAR(255) NOT NULL UNIQUE,
+        senha VARCHAR(255) NOT NULL,
+        endereco VARCHAR(255) NOT NULL,
+        telefone VARCHAR(15) NOT NULL
+    )
+";
+
+if ($conn->query($sql) !== TRUE) {
+    $response["success"] = false;
+    $response["message"] = "Erro ao criar a tabela 'entidades': " . $conn->error;
+}
+
+$sql = "
+    CREATE TABLE IF NOT EXISTS itens (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        idEntidade INT,
+        descricao VARCHAR(255) NOT NULL,
+        quantidade INT NOT NULL,
+        disponivel BOOLEAN NOT NULL,
+        FOREIGN KEY (idEntidade) REFERENCES entidades(id) ON DELETE CASCADE
+    )
+";
+
+if ($conn->query($sql) !== TRUE) {
+    $response["success"] = false;
+    $response["message"] = "Erro ao criar a tabela 'itens': " . $conn->error;
+}
+
+else {
     $email = 'root';
     $password = 'root';
     $name = 'Root';

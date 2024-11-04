@@ -6,6 +6,7 @@
 
 // Plugins
 import { registerPlugins } from '@/plugins'
+import { VueMaskDirective } from 'v-mask'
 
 // Components
 import App from './App.vue'
@@ -14,7 +15,7 @@ import App from './App.vue'
 import { createApp } from 'vue'
 
 const app = createApp(App)
-
+app.directive('mask', VueMaskDirective)
 registerPlugins(app)
 
 app.mount('#app')

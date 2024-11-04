@@ -4,50 +4,25 @@
       <div class="text-h4 text-secondary font-weight-bold">Entrar</div>
       <v-container class="d-flex flex-column justify-space-between flex-grow-1">
         <v-form v-model="isValid" class="d-flex flex-column ga-5">
-          <v-text-field
+          <TextFieldComponent
             v-model="email"
-            class="text-primary"
-            clearable
-            color="primary"
-            label="Endereço de email"
+            icon="mdi-hand-heart"
+            label="Nome da entidade"
             placeholder="exemplo@gmail.com"
-            :rules="emailRules"
-            type="email"
-            variant="outlined"
-          >
-            <template #prepend-inner>
-              <v-icon color="primary">mdi-email</v-icon>
-            </template>
-          </v-text-field>
-          <v-text-field
+            :rules="rules.emailRules"
+            @update-model-value="(newValue: string) => email = newValue"
+          />
+          <TextFieldComponent
             v-model="password"
-            :append-inner-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
-            class="text-primary"
-            color="primary"
+            icon="mdi-lock"
+            :isPassword="true"
             label="Senha"
-            :rules="passwordRules"
-            :type="show ? 'text' : 'password'"
-            variant="outlined"
-            @click:append-inner="show = !show"
-          >
-            <template #prepend-inner>
-              <v-icon color="primary">mdi-lock</v-icon>
-            </template>
-          </v-text-field>
+            :rules="rules.passwordRules"
+            @update-model-value="(newValue: string) => password = newValue"
+          />
         </v-form>
         <v-container class="text-secondary text-high-emphasis text-decoration-underline"><span style="cursor: pointer;" @click="()=>{router.push('/')}">Voltar para a seleção de atividades</span></v-container>
-        <v-btn
-          block
-          class="text-background bg-secondary"
-          :disabled="!isValid"
-          :loading="isLoading"
-          rounded="lg"
-          size="x-large"
-          type="submit"
-          @click="onSubmit"
-        >
-          Entrar
-        </v-btn>
+        <BtnComponent :disabled="!isValid" :loading="isLoading" text="Entrar" @button-clicked="onSubmit" />
         <v-container v-if="shouldShowErrorMessage" class="d-flex justify-center text-error font-weight-bold">{{ errorMessageText }}</v-container>
       </v-container>
     </v-container>
@@ -59,35 +34,25 @@
   import router from '@/router'
   import { saveSessionData } from '@/models/utility_classes'
   import { adminDAO } from '@/models/Admins/adminDAO'
-import { Admin } from '@/models/Admins/admin';
+  import { ValidationRules } from '@/rules'
 
   const snackbar = ref(false)
   let snackbarText = ''
   let snackbarColor = ''
-
-  const show = ref(false)
 
   const isValid = ref(false)
 
   const email = ref('')
   const password = ref('')
 
+  const rulesUpdate = computed(() => {
+    return new ValidationRules(password.value)
+  })
+  const rules = computed(() => rulesUpdate.value)
+
   const isLoading = ref(false)
   const shouldShowErrorMessage = ref(false)
   let errorMessageText = ''
-
-  const emailRules = [
-    (value: string) => !!value || 'Email é obrigatório.',
-    (value: string) => {
-      if (value === 'root') return true
-      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      return emailPattern.test(value) || 'Email deve ser válido.'
-    },
-  ]
-
-  const passwordRules = [
-    (value: string) => !!value || 'Senha é obrigatória.',
-  ]
 
   function showSnackbar (response: object) {
     snackbarColor = response.success ? 'success' : 'error'
@@ -96,14 +61,15 @@ import { Admin } from '@/models/Admins/admin';
   }
 
   onMounted(async () => {
-    const response = await adminDAO.isUserAdmin()
+    const response = await adminDAO.isItem()
+    console.log(response)
     if (!response.success) {
       showSnackbar(response)
       return
     }
-    /*if (response.message) {
+    if (response.message) {
       router.push('/Admin/dashboard')
-    }*/
+    }
   })
 
   async function onSubmit () {

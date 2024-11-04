@@ -28,6 +28,7 @@
     "src/**/*",
     "src/**/*.vue",
     "types",
+    "src/v-mask.d.ts",
   ],
   "exclude": ["dist", "node_modules", "cypress"],
   "references": [{ "path": "./tsconfig.node.json" }],

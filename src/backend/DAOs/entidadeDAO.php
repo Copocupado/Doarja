@@ -7,7 +7,7 @@ header("Content-Type: application/json");
 
 include_once __DIR__ . '/../baseDAO.php';
 
-$adminDAO = new AdminDAO();
+$entidadeDAO = new EntidadeDAO();
 
 $jsonData = file_get_contents('php://input');
 $requestData = json_decode($jsonData, true);
@@ -22,7 +22,7 @@ if (isset($getAction)) {
 
     switch ($getAction) {
         case 'read':
-            $response = getAdmin($getData);
+            $response = getEntidade($getData);
             echo json_encode($response);
             break;
 
@@ -32,7 +32,7 @@ if (isset($getAction)) {
             break;
 
         case 'fetchAll':
-            $response = getAllAdmins();
+            $response = getAllEntidades();
             echo json_encode($response);
             break;
 
@@ -48,58 +48,51 @@ if (isset($getAction)) {
 if (isset($postAction)) {
     switch ($postAction) {
         case 'create':
-            $response = addAdmin($postData);
+            $response = addEntidade($postData);
             echo json_encode($response);
             break;
         case 'delete':
-            $response = deleteAdmin($postData);
+            $response = deleteEntidade($postData);
             echo json_encode($response);
             break;
         case 'update':
-            $response = updateAdmin($postData);
+            $response = updateEntidade($postData);
             echo json_encode($response);
             break;
     }
 }
 
-function getAdmin($admin)
+function getEntidade($entidade)
 {
-    global $adminDAO;
+    global $entidadeDAO;
 
     try {
-        $password = $admin['senha'];
-        unset($admin['senha']);
+        $password = $entidade['senha'];
+        unset($entidade['senha']);
 
-        $response = $adminDAO->read($admin);
+        $response = $entidadeDAO->read($entidade);
 
         if (!$response['success'])
             return $response;
 
-        $adminList = $response['message'];
+        $entidadeList = $response['message'];
 
-        if (empty($adminList)) {
+        if (empty($entidadeList)) {
             return [
                 'success' => false,
-                'message' => 'Nenhum administrador encontrado com essas credenciais'
+                'message' => 'Nenhuma entidade encontrada com essas credenciais'
             ];
         }
 
-        $admin = $adminList[0];
+        $entidade = $entidadeList[0];
 
-        $response = verifyPasswords($admin['senha'], $password);
+        $response = verifyPasswords($entidade['senha'], $password);
         if (!$response['success'])
             return $response;
-
-        if ($admin['ativo'] == 0) {
-            return [
-                'success' => false,
-                'message' => 'Sua conta está desativada, tente novamente mais tarde'
-            ];
-        }
 
         return [
             'success' => true,
-            'message' => $admin
+            'message' => $entidade
         ];
     } catch (\Throwable $th) {
         return [
@@ -111,87 +104,80 @@ function getAdmin($admin)
 
 function isItem()
 {
-    global $adminDAO;
+    global $entidadeDAO;
 
     try {
-        return $adminDAO->isItem();
+        return $entidadeDAO->isItem();
     } catch (\Throwable $th) {
         return [
             'success' => false,
-            'message' => 'Falha ao verificar se o usuário é um admin: ' . $th->getMessage(),
+            'message' => 'Falha ao verificar se o usuário é um entidade: ' . $th->getMessage(),
         ];
     }
 }
 
-function getAllAdmins()
+function getAllEntidades()
 {
-    global $adminDAO;
+    global $entidadeDAO;
     try {
-        return $adminDAO->fetchAll();
+        return $entidadeDAO->fetchAll();
     } catch (\Throwable $th) {
         return [
             'success' => false,
-            'message' => 'Erro ao obter todos os admins: ' . $th->getMessage(),
+            'message' => 'Erro ao obter todos os entidades: ' . $th->getMessage(),
         ];
     }
 }
 
-function addAdmin($admin)
+function addEntidade($entidade)
 {
-    global $adminDAO;
-
+    global $entidadeDAO;
     try {
 
-        if (isset($admin['senha'])) {
-            $admin['senha'] = password_hash($admin['senha'], PASSWORD_BCRYPT);
+        if (isset($entidade['senha'])) {
+            $entidade['senha'] = password_hash($entidade['senha'], PASSWORD_BCRYPT);
         } else {
             return [
                 'success' => false,
-                'message' => 'Administrador deve conter senha'
+                'message' => 'Entidade deve conter senha'
             ];
         }
 
-        $admin['ativo'] = isset($admin['ativo']) && $admin['ativo'] ? 1 : 0;
-
-        return $adminDAO->create($admin);
-
+        unset($entidade['id']);
+        return $entidadeDAO->create($entidade);
     } catch (\Throwable $th) {
         return [
             'success' => false,
-            'message' => 'Falha ao adicionar o administrador: ' . $th->getMessage(),
+            'message' => 'Falha ao adicionar a entidade: ' . $th->getMessage(),
         ];
     }
 }
-function deleteAdmin($admin)
+function deleteEntidade($entidade)
 {
-    global $adminDAO;
+    global $entidadeDAO;
     try {
 
-        $admin['ativo'] = isset($admin['ativo']) && $admin['ativo'] == 'Ativado' ? 1 : 0;
-
-        return $adminDAO->delete($admin);
+        return $entidadeDAO->delete($entidade);
 
     } catch (\Throwable $th) {
         return [
             'success' => false,
-            'message' => 'Falha ao excluir o administrador: ' . $th->getMessage(),
+            'message' => 'Falha ao excluir a entidade: ' . $th->getMessage(),
         ];
     }
 }
 
-function updateAdmin($admin)
+function updateEntidade($entidade)
 {
-    global $adminDAO;
+    global $entidadeDAO;
     try {
 
-        $admin['ativo'] = isset($admin['ativo']) && $admin['ativo'] ? 1 : 0;
-
-        return $adminDAO->update($admin);
+        return $entidadeDAO->update($entidade);
 
     } catch (\Throwable $th) {
         return [
             'success' => false,
-            'message' => 'Falha ao atualizar o administrador: ' . $th->getMessage(),
+            'message' => 'Falha ao atualizar a entidade: ' . $th->getMessage(),
         ];
     }
 }
