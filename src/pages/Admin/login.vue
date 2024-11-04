@@ -51,12 +51,19 @@
         <v-container v-if="shouldShowErrorMessage" class="d-flex justify-center text-error font-weight-bold">{{ errorMessageText }}</v-container>
       </v-container>
     </v-container>
+    <Snackbar :snackbar="snackbar" :snackbar-color="snackbarColor" :snackbar-text="snackbarText" @close="snackbar = false" />
   </div>
 </template>
 <script lang="ts" setup>
   import { onMounted, ref } from 'vue'
   import router from '@/router'
-  import { getAdmin, isUserAdmin, saveSessionData } from '@/models/admin'
+  import { saveSessionData } from '@/models/utility_classes'
+  import { adminDAO } from '@/models/Admins/adminDAO'
+import { Admin } from '@/models/Admins/admin';
+
+  const snackbar = ref(false)
+  let snackbarText = ''
+  let snackbarColor = ''
 
   const show = ref(false)
 
@@ -82,12 +89,21 @@
     (value: string) => !!value || 'Senha é obrigatória.',
   ]
 
+  function showSnackbar (response: object) {
+    snackbarColor = response.success ? 'success' : 'error'
+    snackbarText = response.message
+    snackbar.value = true
+  }
+
   onMounted(async () => {
-    if (await isUserAdmin()) {
-      console.log('user already logged in as admin, redirecting...')
-    } else {
-      console.log('user not logged in, taking no further action')
+    const response = await adminDAO.isUserAdmin()
+    if (!response.success) {
+      showSnackbar(response)
+      return
     }
+    /*if (response.message) {
+      router.push('/Admin/dashboard')
+    }*/
   })
 
   async function onSubmit () {
@@ -95,8 +111,8 @@
 
     isLoading.value = true
     try {
-      const response = await getAdmin(email.value, password.value)
-      if (!(response.success)) {
+      const response = await adminDAO.read({ email: email.value, senha: password.value })
+      if (!response.success) {
         errorMessageText = response.message
         shouldShowErrorMessage.value = true
         setTimeout(() => {
@@ -105,11 +121,7 @@
       } else {
         const admin = response.message
         try {
-          if (await saveSessionData(admin)) {
-            console.log('Users credentilas saved successfully')
-          } else {
-            console.log('Failed to save user credentials')
-          }
+          await saveSessionData({ role: 'admin', ...admin })
         } catch (error) {
           console.error('Error saving session data:', error)
         } finally {

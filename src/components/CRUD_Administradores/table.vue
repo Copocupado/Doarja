@@ -70,17 +70,18 @@
 
 <script lang="ts" setup>
   import { reactive, ref, watch } from 'vue'
-  import { addAdmin, Admin, deleteAdmin, getAllAdmins, updateAdmin } from '@/models/admin'
   import OptionsAdmins from './optionsAdmins.vue'
   import Snackbar from '../snackbar.vue'
+  import { Admin } from '@/models/Admins/admin'
+  import { adminDAO } from '@/models/Admins/adminDAO'
 
   const props = defineProps<{
     currentlyAuthedAdmin: Admin,
   }>()
 
   const snackbar = ref(false)
-  let snackbarText = 'dasdasdasdasdasdasd'
-  let snackbarColor = 'success'
+  let snackbarText = ''
+  let snackbarColor = ''
 
   const adminList = ref<Admin[] | null>(null)
   const itemsPerPage = ref(10)
@@ -111,7 +112,12 @@
   })
 
   async function getAdmins () {
-    return getAllAdmins()
+    const response = await adminDAO.fetchAll()
+    if (response.success != undefined && response.success === false) {
+      showSnackbar(response)
+      return
+    }
+    return response
   }
 
   async function loadItems ({ page, itemsPerPage, sortBy }: { page: number; itemsPerPage: number; sortBy: Array<{ key: string; order: string }> }): Promise<void> {
@@ -135,6 +141,10 @@
       }
     }).filter((item: Admin) => {
       return search ? item.nome.toLowerCase().includes(search.toLowerCase()) : true
+    }).sort((a: Admin, b: Admin) => {
+      if (a.nome === 'Root') return -1
+      if (b.nome === 'Root') return 1
+      return 0
     })
 
     if (sortBy.length) {
@@ -156,7 +166,7 @@
 
   async function addAdministrador (name: string, email: string, password: string, isActive: boolean) {
     const newAdmin = new Admin(email, password, name, isActive, '/src/assets/admin-default-pfp.png')
-    const response = await addAdmin(newAdmin)
+    const response = await adminDAO.create(newAdmin)
 
     await loadItems({ page: 1, itemsPerPage: itemsPerPage.value, sortBy: [] })
 
@@ -164,15 +174,15 @@
   }
 
   async function deleteAdministrator (admin: Admin) {
-    const response = await deleteAdmin(admin)
+    const response = await adminDAO.delete(admin)
 
     await loadItems({ page: 1, itemsPerPage: itemsPerPage.value, sortBy: [] })
 
     showSnackbar(response)
   }
   async function updateAdministrator (admin: Admin, value: boolean) {
-    admin.ativo = value
-    const response = await updateAdmin(admin)
+    const newAdmin = new Admin(admin.email, admin.senha, admin.nome, value, admin.foto_de_perfil)
+    const response = await adminDAO.update(newAdmin)
 
     await loadItems({ page: 1, itemsPerPage: itemsPerPage.value, sortBy: [] })
     showSnackbar(response)

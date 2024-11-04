@@ -59,7 +59,7 @@
 <script lang="ts" setup>
   import { onMounted, ref } from 'vue'
   import router from '@/router'
-  import { getAdmin, isUserAdmin, saveSessionData } from '@/models/admin'
+  import { getAdmin, isUserAdmin, saveSessionData } from '@/models/Admins/admin'
   import LocationPickerComponent from '@/components/locationPickerComponent.vue'
 
   const show = ref(false)

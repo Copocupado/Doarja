@@ -3,18 +3,26 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
-    include 'config.php';
+include 'config.php';
 
-    $conn = new mysqli($host, $usuario, $senha);
+$response = [
+    "success" => true,
+    "message" => "Banco de dados incializado com sucesso"
+];
 
-    if ($conn->connect_error) {
-        die("Erro de conexão: " . $conn->connect_error);
-    }
+$conn = new mysqli($host, $usuario, $senha);
 
-    $conn->query("CREATE SCHEMA IF NOT EXISTS $banco");
-    $conn->select_db($banco);
+if ($conn->connect_error) {
+    $response["success"] = false;
+    $response["message"] = "Erro de conexão: " . $conn->connect_error;
+    echo json_encode($response);
+    exit();
+}
 
-    $sql = "CREATE TABLE IF NOT EXISTS admins (
+$conn->query("CREATE SCHEMA IF NOT EXISTS $banco");
+$conn->select_db($banco);
+
+$sql = "CREATE TABLE IF NOT EXISTS admins (
             email VARCHAR(255) PRIMARY KEY,
             senha VARCHAR(255) NOT NULL,
             nome VARCHAR(255) NOT NULL,
@@ -22,12 +30,10 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization");
             foto_de_perfil VARCHAR(255) NOT NULL
         )";
 
-    if ($conn->query($sql) === TRUE) {
-        echo "Tabela 'admins' criada com sucesso.";
-    } else {
-        echo "Erro ao criar a tabela: " . $conn->error;
-    }
-
+if ($conn->query($sql) !== TRUE) {
+    $response["success"] = false;
+    $response["message"] = "Erro ao criar a tabela 'admins': " . $conn->error;
+} else {
     $email = 'root';
     $password = 'root';
     $name = 'Root';
@@ -40,8 +46,15 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization");
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
         $insertSql = "INSERT INTO admins (email, senha, nome, ativo, foto_de_perfil) VALUES ('$email', '$hashedPassword', '$name', $active, '$imageFilePath')";
-        $conn->query($insertSql) === TRUE;
-    }
 
-    $conn->close();
+        if ($conn->query($insertSql) !== TRUE) {
+            $response["success"] = false;
+            $response["message"] = "Erro ao adicionar o administrador 'root': " . $conn->error;
+        }
+    }
+}
+
+$conn->close();
+
+echo json_encode($response);
 ?>

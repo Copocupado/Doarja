@@ -1,16 +1,20 @@
 import axios from 'axios'
+import { axiosGetRequest, axiosPostRequest } from './axios'
 
-async function bootDatabase (): Promise<'success' | 'failure'> {
+async function bootDatabase (): Promise<object> {
   try {
-    await axios.post('http://localhost/Doarja/src/backend/boot.php')
-    return 'success'
+    const response = await axios.post('http://localhost/Doarja/src/backend/boot.php')
+    return response.data
   } catch (error) {
     console.error('Error fetching data:', error)
-    return 'failure'
+    return {
+      success: false,
+      message: 'Erro ao inicializar o banco de dados: ' + error,
+    }
   }
 }
 
-async function getSessionData (): Promise<object | null> {
+async function getSessionData (): Promise<object> {
   try {
     const response = await axios.get('http://localhost/Doarja/src/backend/SessionManager.php', {
       params: {
@@ -21,11 +25,25 @@ async function getSessionData (): Promise<object | null> {
     return response.data
   } catch (error) {
     console.error('Error checking user admin status:', error)
-    return null
+    return {
+      success: false,
+      message: 'Erro ao obter os dados da sessao: ' + error,
+    }
   }
 }
 
-async function logOut (): Promise<boolean> {
+async function saveSessionData (data: object): Promise<object> {
+  try {
+    return await axiosPostRequest(data, 'saveSessionData', 'SessionManager.php')
+  } catch (error) {
+    return {
+      success: false,
+      message: 'Erro ao salvar os dados na sessao: ' + error,
+    }
+  }
+}
+
+async function logOut (): Promise<object> {
   try {
     const response = await axios.post(
       'http://localhost/Doarja/src/backend/SessionManager.php',
@@ -39,14 +57,18 @@ async function logOut (): Promise<boolean> {
         withCredentials: true,
       }
     )
-    return true
+    return response.data
   } catch (error) {
-    return false
+    return {
+      success: false,
+      message: 'Erro ao usuario sair: ' + error,
+    }
   }
 }
 
 export {
   bootDatabase,
   getSessionData,
+  saveSessionData,
   logOut,
 }

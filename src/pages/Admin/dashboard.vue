@@ -30,7 +30,7 @@
   import { onMounted, ref } from 'vue'
   import router from '@/router'
   import { getSessionData } from '@/models/utility_classes'
-  import { Admin } from '@/models/admin'
+  import { Admin } from '@/models/Admins/admin'
 
   const admin = ref(null)
 
@@ -41,7 +41,6 @@
   }
 
   const currentComponent = computed(() => {
-    console.log('called')
     switch (selectedSection.value) {
       case 'administradores':
         return AdminTable
@@ -52,12 +51,12 @@
 
   onMounted(async () => {
     const response = await getSessionData()
-    if (response == null) {
-      console.log('user cannot be null, redirecting to login...')
+    if (!response.success) {
+      console.log(response.message)
       router.push('/Admin/login')
       return
     }
-    admin.value = new Admin(response.email, response.senha, response.nome, response.ativo, response.foto_de_perfil)
+    admin.value = new Admin(response.message.email, response.message.senha, response.message.nome, response.message.ativo, response.message.foto_de_perfil)
   })
 
 </script>

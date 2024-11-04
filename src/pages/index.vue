@@ -2,25 +2,14 @@
   <div class="responsive-background pa-5">
     <v-container class="bg-background rounded-lg d-flex flex-column justify-space-between ga-5 pa-5">
       <v-row class="d-flex justify-space-between flex-grow-0">
-        <!-- Second column (image) first on small screens -->
         <v-col class="order-1 order-sm-2 d-flex align-center justify-center" cols="12" sm="2">
           <v-img :aspect-ratio="1/1" max-width="300px" src="/src/assets/logo.png" />
         </v-col>
 
-        <!-- First column (text) second on small screens -->
         <v-col class="text-h2 text-primary font-weight-bold d-flex align-center justify-center justify-sm-start order-2 order-sm-1" cols="12" sm="10" style="text-align: center;">
           Bem Vindo a Doarja!
         </v-col>
       </v-row>
-      <!--<v-col class="d-flex justify-space-between flex-grow-0">
-        <div class="text-h2 text-primary font-weight-bold d-flex justify-center align-center">Bem Vindo a Doarja!</div>
-        <div style="width:15%">
-          <v-img
-            :aspect-ratio="1/1"
-            src="/src/assets/logo.png"
-          />
-        </div>
-      </v-col>-->
       <v-col class="text-center text-h5 text-secondary font-weight-medium flex-grow-0">Escolha o que melhor te descreve</v-col>
       <v-row>
         <v-col cols="12" sm="4"><HoverBoxComponent :click="()=>goTo('administrador')" /></v-col>
@@ -28,6 +17,7 @@
         <v-col cols="12" sm="4"><HoverBoxComponent :click="()=>goTo('search')" icon="mdi-account-search" text="Procuro doações" /></v-col>
       </v-row>
     </v-container>
+    <Snackbar :snackbar="snackbar" :snackbar-color="snackbarColor" :snackbar-text="snackbarText" @close="snackbar = false" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -35,6 +25,10 @@
   import router from '@/router'
   import { onMounted } from 'vue'
   import { bootDatabase } from '@/models/utility_classes'
+
+  const snackbar = ref(false)
+  let snackbarText = ''
+  let snackbarColor = ''
 
   function goTo (value: String) {
     switch (value) {
@@ -49,13 +43,15 @@
     }
   }
 
+  function showSnackbar (response: object) {
+    snackbarColor = response.success ? 'success' : 'error'
+    snackbarText = response.message
+    snackbar.value = true
+  }
+
   onMounted(async () => {
     const response = await bootDatabase()
-    if (response === 'failure') {
-      console.log('failed to connect to db')
-    } else {
-      console.log('successfully connected to the db')
-    }
+    showSnackbar(response)
   })
 
 </script>
