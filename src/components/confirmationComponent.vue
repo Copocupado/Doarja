@@ -1,6 +1,6 @@
 <template>
   <v-dialog max-width="400px" :model-value="dialog">
-    <v-card>
+    <v-card class="bg-background">
       <v-card-title class="headline">
         Confirmação
       </v-card-title>

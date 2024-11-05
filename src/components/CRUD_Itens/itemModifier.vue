@@ -1,67 +1,107 @@
 <template>
-  <v-dialog activator="parent" max-width="400px">
-    <template #default="{ isActive }">
-      <v-card
-        class="bg-background text-secondary text-center"
-        title="Adicionar novo administrador"
-      >
-        <v-card-text>
-          <v-form
-            v-model="form"
-            class="d-flex flex-column ga-3"
-          >
-            <v-text-field v-model="name" label="Nome" :rules="[rules.required]" variant="outlined" />
-            <v-text-field v-model="email" label="Email" :rules="[rules.required, rules.validEmail]" variant="outlined" />
-            <v-text-field
-              v-model="password"
-              :append-inner-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
-              label="Senha"
-              :rules="[rules.required]"
-              :type="show ? 'text' : 'password'"
-              variant="outlined"
-              @click:append-inner="show = !show"
-            />
-            <v-checkbox
-              v-model="active"
-              label="Ativar administrador"
-            />
-          </v-form>
-        </v-card-text>
-        <template #actions>
-          <div class="d-flex" style="justify-content: end; width:100%">
-            <v-btn
-              class="px-5"
-              color="success"
-              text="Adicionar"
-              variant="tonal"
-              @click="() => { if(!form) return; emit('add-administrador', name, email, password, active); isActive.value = false;}"
-            />
-          </div>
-        </template>
-      </v-card>
-    </template>
+  <v-dialog max-width="400px" :model-value="shouldDisplay" persistent>
+    <v-card
+      class="bg-background text-secondary text-center"
+      :title="item == null ? 'Adicionar novo item' : 'Item para editar'"
+    >
+      <v-card-text>
+        <v-form
+          v-model="form"
+          class="d-flex flex-column ga-3"
+        >
+          <TextFieldComponent
+            v-model="descricao"
+            icon="mdi-pencil"
+            label="Descrição"
+            placeholder="etc..."
+            :rules="rules.descriptionRules"
+            @update-model-value="(newValue: string) => descricao = newValue"
+          />
+          <TextFieldComponent
+            v-model="quantidade"
+            icon="mdi-pound"
+            label="Quantidade"
+            placeholder="Apenas números"
+            :rules="rules.numericRules"
+            type="number"
+            @update-model-value="(newValue: string) => quantidade = newValue"
+          />
+          <v-checkbox
+            v-model="disponivel"
+            class="text-primary"
+            color="primary"
+            label="Disponível"
+          />
+        </v-form>
+      </v-card-text>
+      <template #actions>
+        <div class="d-flex" style="justify-content: start; width:50%">
+          <v-btn
+            class="px-5"
+            color="error"
+            text="Cancelar"
+            variant="tonal"
+            @click="emit('close')"
+          />
+        </div>
+        <div class="d-flex" style="justify-content: end; width:50%">
+          <v-btn
+            class="px-5"
+            color="success"
+            text="Concluir"
+            variant="tonal"
+            @click="onSubmit"
+          />
+        </div>
+      </template>
+    </v-card>
   </v-dialog>
 </template>
+
 <script lang="ts" setup>
-  import { ref } from 'vue'
+  import { ref, watch } from 'vue'
+  import { ValidationRules } from '@/rules'
+  import { Item } from '@/models/Itens/itens'
+
+  const rules = new ValidationRules('')
+
+  const props = defineProps<{
+    shouldDisplay: boolean,
+    shouldUpdate: boolean,
+    item?: Item,
+  }>()
 
   // eslint-disable-next-line func-call-spacing
   const emit = defineEmits<{
-    (e: 'add-administrador', name: string, email: string, password: string, isActive: boolean): void
+    (e: 'add-item', descricao: string, quantidade: number, disponivel: boolean): void
+    (e: 'update-item', descricao: string, quantidade: number, disponivel: boolean): void
+    (e: 'close'): void
   }>()
 
   const form = ref(false)
-  const name = ref('')
-  const email = ref('')
-  const password = ref('')
-  const show = ref(false)
-  const active = ref(false)
+  const descricao = ref('')
+  const quantidade = ref('')
+  const disponivel = ref(false)
 
-  const rules = {
-    required: (value: string) => value.length > 0 || 'Campo necessário',
-    validEmail: (value: string) => {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      return emailRegex.test(value) || 'Insira um e-mail válido'
-    },
+  watch(() => props.item, newItem => {
+    if (newItem) {
+      descricao.value = newItem.descricao
+      quantidade.value = newItem.quantidade.toString()
+      disponivel.value = newItem.disponivel === 'Disponível'
+    } else {
+      descricao.value = ''
+      quantidade.value = ''
+      disponivel.value = false
+    }
+  }, { immediate: true })
+
+  // Handle form submission
+  function onSubmit () {
+    if (!form.value) return
+    if (props.shouldUpdate) {
+      emit('update-item', descricao.value, Number(quantidade.value), disponivel.value)
+      return
+    }
+    emit('add-item', descricao.value, Number(quantidade.value), disponivel.value)
   }
 </script>

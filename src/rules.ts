@@ -38,6 +38,15 @@ class ValidationRules {
     return true
   }
 
+  private numericOnly = (message: string) => (value: string) => {
+    const numericPattern = /^[0-9]*$/
+    return numericPattern.test(value) || message
+  }
+
+  private validDescription = (min: number, max: number, message: string) => (value: string) => {
+    return (value.length >= min && value.length <= max) || message
+  }
+
   get nameRules () {
     return [
       this.required('O nome é obrigatório.'),
@@ -76,6 +85,20 @@ class ValidationRules {
     const maxSize = 2 * 1024 * 1024
     return [
       this.validFile(maxSize, 'Um arquivo deve ser selecionado.'),
+    ]
+  }
+
+  get descriptionRules () {
+    return [
+      this.required('A descrição é obrigatória.'),
+      this.validDescription(10, 500, 'A descrição deve ter entre 10 e 500 caracteres.'),
+    ]
+  }
+
+  get numericRules () {
+    return [
+      this.required('Este campo é obrigatório.'),
+      this.numericOnly('Este campo deve conter apenas números.'),
     ]
   }
 }

@@ -6,6 +6,7 @@ abstract class BaseDAO
 {
     protected abstract function getTableName(): string;
     protected abstract function getRole(): string;
+    protected abstract function mainField(): string;
 
     public function fetchAll(): array
     {
@@ -76,7 +77,7 @@ abstract class BaseDAO
     public function update($item): array
     {
         try {
-            $response = updateEntry($this->getTableName(), 'email', $item['email'], $item);
+            $response = updateEntry($this->getTableName(), $this->mainField(), $item[$this->mainField()], $item);
 
             if (!$response['success']) {
                 return $response;
@@ -154,6 +155,11 @@ class AdminDAO extends BaseDAO
     {
         return 'admin';
     }
+
+    protected function mainField(): string
+    {
+        return 'email';
+    }
 }
 
 class EntidadeDAO extends BaseDAO
@@ -167,6 +173,12 @@ class EntidadeDAO extends BaseDAO
     {
         return 'entidade';
     }
+
+    protected function mainField(): string
+    {
+        return 'id';
+    }
+
 }
 
 class ItemDAO extends BaseDAO
@@ -179,5 +191,10 @@ class ItemDAO extends BaseDAO
     protected function getRole(): string
     {
         return 'item';
+    }
+
+    protected function mainField(): string
+    {
+        return 'id';
     }
 }

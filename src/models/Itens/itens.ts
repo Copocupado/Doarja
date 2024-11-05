@@ -1,16 +1,16 @@
 class Item {
   id?: number
-  idEntidade?:number
+  idEntidade:number
   descricao: string
   quantidade: number
   disponivel: boolean
 
   constructor (
+    idEntidade:number,
     descricao: string,
     quantidade: number,
     disponivel: boolean,
     id?: number,
-    idEntidade?:number,
   ) {
     this.id = id
     this.idEntidade = idEntidade

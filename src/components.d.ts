@@ -21,6 +21,7 @@ declare module 'vue' {
     Navbar: typeof import('./components/Navbar/Navbar.vue')['default']
     OptionsAdmins: typeof import('./components/CRUD_Administradores/optionsAdmins.vue')['default']
     OptionsFuncionarios: typeof import('./components/CRUD_Administradores/optionsFuncionarios.vue')['default']
+    OptionsItems: typeof import('./components/CRUD_Itens/optionsItems.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Snackbar: typeof import('./components/snackbar.vue')['default']

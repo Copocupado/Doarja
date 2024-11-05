@@ -133,17 +133,7 @@ function addItem($item)
 {
     global $itemDAO;
     try {
-
-        if (isset($item['senha'])) {
-            $item['senha'] = password_hash($item['senha'], PASSWORD_BCRYPT);
-        } else {
-            return [
-                'success' => false,
-                'message' => 'Item deve conter senha'
-            ];
-        }
-
-        unset($item['id']);
+        $item['disponivel'] = isset($item['disponivel']) && $item['disponivel'] ? 1 : 0;
         return $itemDAO->create($item);
     } catch (\Throwable $th) {
         return [
@@ -157,6 +147,7 @@ function deleteItem($item)
     global $itemDAO;
     try {
 
+        $item['disponivel'] = isset($item['disponivel']) && $item['disponivel'] == 'Disponível' ? 1 : 0;
         return $itemDAO->delete($item);
 
     } catch (\Throwable $th) {
@@ -172,6 +163,7 @@ function updateItem($item)
     global $itemDAO;
     try {
 
+        $item['disponivel'] = isset($item['disponivel']) && $item['disponivel'] == 'Disponível' ? 1 : 0;
         return $itemDAO->update($item);
 
     } catch (\Throwable $th) {

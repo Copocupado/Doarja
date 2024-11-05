@@ -10,12 +10,11 @@
           </div>
         </v-chip>
       </div>
-      <v-btn color="secondary" prepend-icon="mdi-plus-circle">
+      <v-btn color="secondary" prepend-icon="mdi-plus-circle" @click="() => { itemToUpdate = null; shouldDisplay = true; shouldUpdate = false }">
         <template #prepend>
           <v-icon class="text-background" />
         </template>
         <div class="text-background">Adicionar Item</div>
-        <AddAdmin @add-administrador="addItem" />
       </v-btn>
     </div>
     <v-data-table-server
@@ -32,11 +31,21 @@
       style="border-radius: 12px;"
       @update:options="loadItems"
     >
+      <template #item.id="{ item }">
+        <div
+          class="text-start"
+          style="
+            width: 200px;
+          "
+        >
+          {{ item.id }}
+        </div>
+      </template>
       <template #item.descricao="{ item }">
         <div
-          class="text-center"
+          class="text-start"
           style="
-            max-width: 800px;
+            max-width: 500px;
             max-height: 300px;
             overflow-y: auto;
             word-wrap: break-word;
@@ -47,11 +56,10 @@
         </div>
       </template>
       <template #item.opcoes="{ item }">
-        <OptionsAdmins
-          v-if="shouldDisplayOptions(item)"
-          :admin="item"
-          @delete-admin="deleteAdministrator"
-          @update-admin="updateAdministrator"
+        <OptionsItems
+          :item="item"
+          @delete="deleteItem"
+          @update="update"
         />
       </template>
       <template #tfoot>
@@ -70,6 +78,14 @@
     </v-data-table-server>
   </v-container>
   <Snackbar :snackbar="snackbar" :snackbar-color="snackbarColor" :snackbar-text="snackbarText" @close="snackbar = false" />
+  <ItemModifier
+    :item="itemToUpdate"
+    :should-display="shouldDisplay"
+    :should-update="shouldUpdate"
+    @add-item="addItem"
+    @close="shouldDisplay = false"
+    @update-item="updateItem"
+  />
 </template>
 
 <script lang="ts" setup>
@@ -78,6 +94,10 @@
   import { Item } from '@/models/Itens/itens'
   import { itemDAO } from '@/models/Itens/itensDAO'
   import { Entidade } from '@/models/Entidade/entidade'
+
+  const shouldDisplay = ref(false)
+  let shouldUpdate = false
+  const itemToUpdate = ref<Item | null>(null)
 
   const props = defineProps<{
     currentlyAuthedEntidade: Entidade,
@@ -91,13 +111,14 @@
   const itemsPerPage = ref(10)
   const headers = reactive([
     {
-      title: 'Item',
+      title: 'ID',
       align: 'start',
       sortable: true,
       key: 'id',
     },
-    { title: 'Descrição', key: 'descricao', align: 'center' },
-    { title: 'Disponível', key: 'disponivel', align: 'end' },
+    { title: 'Descrição', key: 'descricao', align: 'start' },
+    { title: 'Quantidade', key: 'quantidade', align: 'start' },
+    { title: 'Disponível', key: 'disponivel', align: 'start' },
     {
       title: 'Opções',
       align: 'end',
@@ -117,7 +138,6 @@
 
   async function getItems () {
     const response = await itemDAO.read({ idEntidade: props.currentlyAuthedEntidade.id })
-    console.log(response)
     if (response.success != undefined && response.success === false) {
       showSnackbar(response)
       return
@@ -142,7 +162,7 @@
       delete item.disponivel
       return {
         ...item,
-        disponivel: isAtivo ? 'Disponivel' : 'Nao disponivel',
+        disponivel: isAtivo ? 'Disponível' : 'Não disponível',
       }
     }).filter((item: Item) => {
       return search ? item.descricao.toLowerCase().includes(search.toLowerCase()) : true
@@ -165,32 +185,36 @@
     totalItems.value = items.length
   }
 
-  async function addItem (name: string, email: string, password: string, isActive: boolean) {
-    const newAdmin = new Admin(email, password, name, isActive, '/src/assets/admin-default-pfp.png')
-    const response = await adminDAO.create(newAdmin)
+  async function addItem (descricao: string, quantidade: number, disponivel: boolean) {
+    shouldDisplay.value = false
+    const newItem = new Item(props.currentlyAuthedEntidade.id!, descricao, quantidade, disponivel)
+    const response = await itemDAO.create(newItem)
 
     await loadItems({ page: 1, itemsPerPage: itemsPerPage.value, sortBy: [] })
 
     showSnackbar(response)
   }
 
-  async function deleteAdministrator (admin: Admin) {
-    const response = await adminDAO.delete(admin)
+  async function deleteItem (item: Item) {
+    console.log(item)
+    const response = await itemDAO.delete(item)
 
     await loadItems({ page: 1, itemsPerPage: itemsPerPage.value, sortBy: [] })
 
     showSnackbar(response)
   }
-  async function updateAdministrator (admin: Admin, value: boolean) {
-    const newAdmin = new Admin(admin.email, admin.senha, admin.nome, value, admin.foto_de_perfil)
-    const response = await adminDAO.update(newAdmin)
+  async function updateItem (descricao: string, quantidade: number, disponivel: boolean) {
+    shouldDisplay.value = false
+    const newItem = new Item(props.currentlyAuthedEntidade.id!, descricao, quantidade, disponivel, itemToUpdate.value!.id)
+    const response = await itemDAO.update(newItem)
 
     await loadItems({ page: 1, itemsPerPage: itemsPerPage.value, sortBy: [] })
     showSnackbar(response)
   }
-
-  function shouldDisplayOptions (admin: Item) {
-    return true
+  function update (item: Item) {
+    shouldUpdate = true
+    itemToUpdate.value = item
+    shouldDisplay.value = true
   }
 
   function showSnackbar (response: object) {
