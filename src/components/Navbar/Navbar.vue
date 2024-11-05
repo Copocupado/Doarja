@@ -62,7 +62,7 @@
   const logUserOut = async () => {
     if (await logOut()) {
       console.log('logged user out')
-      router.push('/Admin/login')
+      router.push('/')
     } else {
       console.log('error')
     }

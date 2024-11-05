@@ -36,7 +36,8 @@
   import { Entidade } from '@/models/Entidade/entidade'
   import tableItens from '@/components/CRUD_Itens/tableItens.vue'
   import infoEntidade from '@/components/CRUD_Entidades/infoEntidade.vue'
-  import { getSessionData } from '@/models/utility_classes'
+  import { getSessionData, saveSessionData } from '@/models/utility_classes'
+import { da } from 'vuetify/locale'
 
   const snackbar = ref(false)
   let snackbarText = ''
@@ -73,11 +74,14 @@
   })
 
   async function updateEntidade(data: object) {
+    data = await saveSessionData({role: 'entidade', ...data})
+    data = await getSessionData()
+
     if(data.success != undefined && !data.success){
       showSnackbar(data)
     }
     else {
-      refresh(data)
+      refresh(data.message)
 
       snackbarColor = 'success'
       snackbarText = 'Dados Atualizados!'

@@ -1,6 +1,6 @@
 <template>
   <v-container
-    class="fill-height d-flex flex-column justify-start"
+    class="fill-height d-flex flex-column justify-start bg-background"
   >
     <v-container class="d-flex ga-3 align-center">
       <div class="text-h4 font-weight-medium text-primary no-padding">Informações da entidade</div>
@@ -51,7 +51,6 @@
   import { ValidationRules } from '@/rules'
   import { Entidade } from '@/models/Entidade/entidade';
   import { entidadeDAO } from '@/models/Entidade/entidadeDAO';
-  import { saveSessionData, getSessionData } from '@/models/utility_classes';
 
   const props = defineProps<{
     currentlyAuthedEntidade?: Entidade,
@@ -68,16 +67,8 @@
     isLoading.value = true
 
     let response = await entidadeDAO.update(newEntidade)
-    console.log(response)
 
     response = await entidadeDAO.read({id: newEntidade.id})
-    console.log(response)
-
-    response = await saveSessionData({role: 'entidade', ...response.message})
-    console.log(response)
-
-    response = await getSessionData()
-    console.log(response)
 
     isLoading.value = false
     emit('update-entidade', response.message)

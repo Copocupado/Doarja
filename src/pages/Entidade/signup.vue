@@ -1,6 +1,6 @@
 <template>
   <div class="responsive-background pa-5">
-    <v-container class="rounded-lg bg-background glowing-border d-flex flex-column align-center ga-5" style="aspect-ratio:16/9; border: 1px solid #0d5c63; padding:50px;">
+    <v-container class="rounded-lg bg-background glowing-border d-flex flex-column align-center ga-5" style="border: 1px solid #0d5c63; padding:50px;">
       <div class="text-h4 text-secondary font-weight-bold">Cadastar-se</div>
       <v-container class="d-flex flex-column justify-space-between flex-grow-1">
         <v-form v-model="isValid" class="d-flex flex-column ga-5">
@@ -143,6 +143,5 @@
     border: 3px solid #0d5c63;
     box-shadow: 0 0 10px 3px rgba(13, 92, 99, 0.6), /* outer glow */
                 0 0 20px 5px rgba(13, 92, 99, 0.3); /* soft spread glow */
-    max-height: 100px;
   }
 </style>

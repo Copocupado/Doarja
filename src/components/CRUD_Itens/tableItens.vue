@@ -95,6 +95,7 @@
   import { itemDAO } from '@/models/Itens/itensDAO'
   import { Entidade } from '@/models/Entidade/entidade'
 
+
   const shouldDisplay = ref(false)
   let shouldUpdate = false
   const itemToUpdate = ref<Item | null>(null)

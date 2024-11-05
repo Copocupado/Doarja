@@ -159,6 +159,7 @@ function addEntidade($entidade)
 }
 function deleteEntidade($entidade)
 {
+    
     global $entidadeDAO;
     try {
 

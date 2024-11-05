@@ -5,6 +5,7 @@
         <Navbar
           :menu-items="[
             { title: 'Administradores', icon: 'mdi-account-hard-hat', value: 'administradores' },
+            { title: 'Entidades', icon: 'mdi-store', value: 'entidades' },
           ]"
           :selected-section="selectedSection"
           :user-main-info="admin.nome"
@@ -29,6 +30,7 @@
 <script lang="ts" setup>
   import Navbar from '@/components/Navbar/Navbar.vue'
   import AdminTable from '@/components/CRUD_Administradores/tableAdmins.vue'
+  import EntidadeTable from '@/components/CRUD_Entidades/tableEntidades.vue'
 
   import { onMounted, ref } from 'vue'
   import router from '@/router'
@@ -47,6 +49,8 @@
     switch (selectedSection.value) {
       case 'administradores':
         return AdminTable
+      case 'entidades':
+        return EntidadeTable
       default:
         return ''
     }
