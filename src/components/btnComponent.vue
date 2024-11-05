@@ -1,12 +1,11 @@
 <template>
   <v-btn
-    block
-    class="text-background bg-secondary"
+    class="text-background flex-grow-1"
+    :color="color"
     :disabled="disabled"
     :loading="loading"
     rounded="lg"
     size="x-large"
-    type="submit"
     @click="emit('button-clicked')"
   >
     {{ text }}
@@ -26,6 +25,10 @@
       type: String,
       default: '',
     },
+    color: {
+      type:String,
+      default:'secondary'
+    }
   })
 
   const emit = defineEmits(['button-clicked'])

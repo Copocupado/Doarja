@@ -67,8 +67,11 @@ function getEntidade($entidade)
     global $entidadeDAO;
 
     try {
-        $password = $entidade['senha'];
-        unset($entidade['senha']);
+        $password = null;
+        if(isset($entidade['senha'])){
+            $password = $entidade['senha'];
+            unset($entidade['senha']);
+        }
 
         $response = $entidadeDAO->read($entidade);
 
@@ -86,9 +89,11 @@ function getEntidade($entidade)
 
         $entidade = $entidadeList[0];
 
-        $response = verifyPasswords($entidade['senha'], $password);
-        if (!$response['success'])
-            return $response;
+        if(isset($password)){
+            $response = verifyPasswords($entidade['senha'], $password);
+            if (!$response['success'])
+                return $response;
+        }
 
         return [
             'success' => true,
@@ -171,6 +176,12 @@ function updateEntidade($entidade)
 {
     global $entidadeDAO;
     try {
+
+        if($entidade['senha'] == '') {
+            unset($entidade['senha']);
+        } else {
+            $entidade['senha'] = password_hash($entidade['senha'], PASSWORD_BCRYPT);
+        }
 
         return $entidadeDAO->update($entidade);
 

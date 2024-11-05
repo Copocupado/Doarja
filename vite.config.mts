@@ -27,7 +27,9 @@ export default defineConfig({
       ],
       dts: 'src/auto-imports.d.ts',
       eslintrc: {
-        enabled: true,
+        enabled: false,
+        filepath: './.eslintrc-auto-import.json',
+        globalsPropValue: true
       },
       vueTemplate: true,
     }),
@@ -46,7 +48,7 @@ export default defineConfig({
     }),
     Fonts({
       google: {
-        families: [ {
+        families: [{
           name: 'Roboto',
           styles: 'wght@100;300;400;500;700;900',
         }],

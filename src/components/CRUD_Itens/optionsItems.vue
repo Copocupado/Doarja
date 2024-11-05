@@ -13,7 +13,7 @@
           <span class="text-error">Excluir</span>
         </template>
       </v-list-item>
-      <v-list-item @click="() => { confirmationDialog = true; methodToExecute = 'Editar'; }">
+      <v-list-item @click="() => { methodToExecute = 'Editar'; getConfirmationResponse(true) }">
         <template #prepend>
           <v-icon color="info">mdi-pencil</v-icon>
         </template>

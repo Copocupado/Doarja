@@ -2,6 +2,7 @@
   <v-text-field
     :append-inner-icon="isPassword ? (show ? 'mdi-eye' : 'mdi-eye-off') : ''"
     :class="class"
+    :hint="hint"
     clearable
     :color="color"
     :label="label"
@@ -69,6 +70,10 @@
     prefix:{
       type: String,
       default: '',
+    },
+    hint: {
+      type:String,
+      default:''
     }
   })
 

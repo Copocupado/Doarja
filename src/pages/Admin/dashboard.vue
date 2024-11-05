@@ -28,7 +28,7 @@
 
 <script lang="ts" setup>
   import Navbar from '@/components/Navbar/Navbar.vue'
-  import AdminTable from '@/components/CRUD_Administradores/table.vue'
+  import AdminTable from '@/components/CRUD_Administradores/tableAdmins.vue'
 
   import { onMounted, ref } from 'vue'
   import router from '@/router'

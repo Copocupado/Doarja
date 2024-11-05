@@ -55,7 +55,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { ref } from 'vue'
+  import { ref, computed } from 'vue'
   import router from '@/router'
   import LocationPickerComponent from '@/components/locationPickerComponent.vue'
   import { ValidationRules } from '@/rules'

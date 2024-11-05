@@ -16,6 +16,7 @@ declare module 'vue' {
     CRUD_funcionarios: typeof import('./components/CRUD_administradores/CRUD_funcionarios.vue')['default']
     FileFieldComponent: typeof import('./components/fileFieldComponent.vue')['default']
     HoverBoxComponent: typeof import('./components/Hover-box/hoverBoxComponent.vue')['default']
+    InfoEntidade: typeof import('./components/CRUD_Entidades/infoEntidade.vue')['default']
     ItemModifier: typeof import('./components/CRUD_Itens/itemModifier.vue')['default']
     LocationPickerComponent: typeof import('./components/locationPickerComponent.vue')['default']
     Navbar: typeof import('./components/Navbar/Navbar.vue')['default']
@@ -25,7 +26,9 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Snackbar: typeof import('./components/snackbar.vue')['default']
-    Table: typeof import('./components/CRUD_Administradores/table.vue')['default']
+    Table: typeof import('./components/CRUD_Administradores/tableAdmins.vue')['default']
+    TableAdmins: typeof import('./components/CRUD_Administradores/tableAdmins.vue')['default']
+    TableItens: typeof import('./components/CRUD_Itens/tableItens.vue')['default']
     TextFieldComponent: typeof import('./components/textFieldComponent.vue')['default']
   }
 }

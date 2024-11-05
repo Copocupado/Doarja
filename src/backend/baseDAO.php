@@ -76,6 +76,7 @@ abstract class BaseDAO
 
     public function update($item): array
     {
+        
         try {
             $response = updateEntry($this->getTableName(), $this->mainField(), $item[$this->mainField()], $item);
 
