@@ -24,6 +24,7 @@
         </v-container>
       </v-col>
     </v-row>
+    <Snackbar :snackbar="snackbar" :snackbar-color="snackbarColor" :snackbar-text="snackbarText" @close="snackbar = false" />
   </v-app>
 </template>
 
@@ -32,12 +33,14 @@
 
   import { onMounted, ref, computed } from 'vue'
   import router from '@/router'
-  import { getSessionData } from '@/models/utility_classes'
   import { Entidade } from '@/models/Entidade/entidade'
   import tableItens from '@/components/CRUD_Itens/tableItens.vue'
   import infoEntidade from '@/components/CRUD_Entidades/infoEntidade.vue'
-  import { entidadeDAO } from '@/models/Entidade/entidadeDAO'
-  import { saveSessionData } from '@/models/utility_classes'
+  import { getSessionData } from '@/models/utility_classes'
+
+  const snackbar = ref(false)
+  let snackbarText = ''
+  let snackbarColor = ''
 
   const entidade = ref<Entidade | null>(null)
 
@@ -66,14 +69,30 @@
       return
     }
     const message = response.message
-    entidade.value = new Entidade(message.nome, message.senha, message.endereco, message.telefone, message.id)
+    refresh(message)
   })
 
-  async function updateEntidade(entidade: Entidade) {
-    let response = await entidadeDAO.update(entidade)
-    console.log(response)
-    response = await entidadeDAO.read({id: entidade.id})
-    console.log(response)
+  async function updateEntidade(data: object) {
+    if(data.success != undefined && !data.success){
+      showSnackbar(data)
+    }
+    else {
+      refresh(data)
+
+      snackbarColor = 'success'
+      snackbarText = 'Dados Atualizados!'
+      snackbar.value = true
+    }
+  }
+
+  function refresh (message: object) {
+    entidade.value = new Entidade(message.nome, message.senha, message.endereco, message.telefone, message.id)
+  }
+
+  function showSnackbar (response: object) {
+    snackbarColor = response.success ? 'success' : 'error'
+    snackbarText = response.message
+    snackbar.value = true
   }
 
 </script>

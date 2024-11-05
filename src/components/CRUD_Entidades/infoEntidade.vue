@@ -34,7 +34,7 @@
           :rules="rules.phoneRules"
           @update-model-value="(newValue: string) => phone = newValue"
         />
-        <BtnComponent color="secondary" :disabled="!isValid" :loading="isLoading" text="Editar" @button-clicked="emit('update-entidade', new Entidade(name, password, address, phone, props.currentlyAuthedEntidade?.id))"/>
+        <BtnComponent color="secondary" :disabled="!isValid" :loading="isLoading" text="Editar" @button-clicked="update"/>
       </v-form>
       <v-container
         v-if="shouldShowErrorMessage"
@@ -50,6 +50,8 @@
   import LocationPickerComponent from '@/components/locationPickerComponent.vue'
   import { ValidationRules } from '@/rules'
   import { Entidade } from '@/models/Entidade/entidade';
+  import { entidadeDAO } from '@/models/Entidade/entidadeDAO';
+  import { saveSessionData, getSessionData } from '@/models/utility_classes';
 
   const props = defineProps<{
     currentlyAuthedEntidade?: Entidade,
@@ -57,8 +59,29 @@
 
   // eslint-disable-next-line func-call-spacing
   const emit = defineEmits<{
-    (e: 'update-entidade', entidade: Entidade): void
+    (e: 'update-entidade', data: object): void
   }>()
+
+  async function update() {
+    const newEntidade = new Entidade(name.value, password.value, address.value, phone.value, props.currentlyAuthedEntidade?.id)
+
+    isLoading.value = true
+
+    let response = await entidadeDAO.update(newEntidade)
+    console.log(response)
+
+    response = await entidadeDAO.read({id: newEntidade.id})
+    console.log(response)
+
+    response = await saveSessionData({role: 'entidade', ...response.message})
+    console.log(response)
+
+    response = await getSessionData()
+    console.log(response)
+
+    isLoading.value = false
+    emit('update-entidade', response.message)
+  }
 
   const isValid = ref(false)
 
@@ -66,6 +89,7 @@
   const password = ref('')
   const address = ref('')
   const phone = ref('')
+  const isLoading = ref(false)
 
   watch(() => props.currentlyAuthedEntidade, newItem => {
     if (newItem) {
@@ -87,7 +111,6 @@
   })
   const rules = computed(() => rulesUpdate.value)
 
-  const isLoading = ref(false)
   const shouldShowErrorMessage = ref(false)
   let errorMessageText = ''
 
