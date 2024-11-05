@@ -199,3 +199,22 @@ class ItemDAO extends BaseDAO
         return 'id';
     }
 }
+
+class PedidoDAO extends BaseDAO
+{
+    protected function getTableName(): string
+    {
+        return 'pedidos';
+    }
+    
+    protected function getRole(): string
+    {
+        return 'pedido';
+    }
+
+    protected function mainField(): string
+    {
+        return 'id';
+    }
+}
+

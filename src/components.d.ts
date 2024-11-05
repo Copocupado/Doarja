@@ -22,6 +22,8 @@ declare module 'vue' {
     OptionsItems: typeof import('./components/CRUD_Itens/optionsItems.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ShowAllPedidos: typeof import('./components/Pedidos/showAllPedidos.vue')['default']
+    ShowPedidos: typeof import('./components/Pedidos/showPedidos.vue')['default']
     Snackbar: typeof import('./components/snackbar.vue')['default']
     TableAdmins: typeof import('./components/CRUD_Administradores/tableAdmins.vue')['default']
     TableEntidades: typeof import('./components/CRUD_Entidades/tableEntidades.vue')['default']

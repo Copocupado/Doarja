@@ -51,6 +51,7 @@
 
   onMounted(async () => {
     const response = await bootDatabase()
+    console.log(response)
     showSnackbar(response)
   })
 

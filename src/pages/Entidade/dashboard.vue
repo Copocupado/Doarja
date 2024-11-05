@@ -37,7 +37,7 @@
   import tableItens from '@/components/CRUD_Itens/tableItens.vue'
   import infoEntidade from '@/components/CRUD_Entidades/infoEntidade.vue'
   import { getSessionData, saveSessionData } from '@/models/utility_classes'
-import { da } from 'vuetify/locale'
+  import showPedidos from '@/components/Pedidos/showPedidos.vue'
 
   const snackbar = ref(false)
   let snackbarText = ''
@@ -58,6 +58,8 @@ import { da } from 'vuetify/locale'
         return infoEntidade
       case 'itens':
         return tableItens
+      case 'pedidos':
+        return showPedidos
       default:
         return ''
     }

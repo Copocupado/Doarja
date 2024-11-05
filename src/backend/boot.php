@@ -68,6 +68,25 @@ if ($conn->query($sql) !== TRUE) {
     $response["message"] = "Erro ao criar a tabela 'itens': " . $conn->error;
 }
 
+$sql = "
+    CREATE TABLE pedidos (
+        id INT PRIMARY KEY AUTO_INCREMENT,
+        idEntidade INT NOT NULL,
+        idItem INT NOT NULL,
+        quantidade INT NOT NULL,
+        nomeRecebedor VARCHAR(255) NOT NULL,
+        telefoneRecebedor VARCHAR(20) NOT NULL,
+        data DATETIME NOT NULL,
+        FOREIGN KEY (idEntidade) REFERENCES entidades(id),
+        FOREIGN KEY (idItem) REFERENCES itens(id)
+    )
+";
+
+if ($conn->query($sql) !== TRUE) {
+    $response["success"] = false;
+    $response["message"] = "Erro ao criar a tabela 'pedidos': " . $conn->error;
+}
+
 else {
     $email = 'root';
     $password = 'root';
