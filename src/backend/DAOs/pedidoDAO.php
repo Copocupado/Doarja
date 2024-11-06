@@ -18,6 +18,7 @@ $postData = isset($requestData['data']) ? $requestData['data'] : null;
 $getAction = isset($_GET['action']) ? $_GET['action'] : null;
 $getData = isset($_GET['data']) ? $_GET['data'] : null;
 
+
 if (isset($getAction)) {
 
     switch ($getAction) {
@@ -64,12 +65,13 @@ if (isset($postAction)) {
 
 function getPedido($pedido)
 {
+    return [
+        'success' => false,
+        'message' => 'Nenhuma pedido encontrada com essas credenciais'
+    ];
     global $pedidoDAO;
 
     try {
-        $password = $pedido['senha'];
-        unset($pedido['senha']);
-
         $response = $pedidoDAO->read($pedido);
 
         if (!$response['success'])
@@ -133,7 +135,6 @@ function addPedido($pedido)
 {
     global $pedidoDAO;
     try {
-        $pedido['disponivel'] = isset($pedido['disponivel']) && $pedido['disponivel'] ? 1 : 0;
         return $pedidoDAO->create($pedido);
     } catch (\Throwable $th) {
         return [

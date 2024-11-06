@@ -18,6 +18,10 @@ class Item {
     this.quantidade = quantidade
     this.disponivel = disponivel
   }
+
+  toString(): string {
+    return `ID: ${this.id ?? "N/A"} | ${this.descricao}`;
+  }
 }
 
 export { Item }

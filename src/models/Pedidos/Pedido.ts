@@ -6,7 +6,7 @@ class Pedido {
   quantidade: number
   nomeRecebedor: string
   telefoneRecebedor: string
-  data: Date
+  data?: Date
 
   constructor (
     idEntidade: number,
@@ -14,7 +14,7 @@ class Pedido {
     quantidade: number,
     nomeRecebedor: string,
     telefoneRecebedor: string,
-    data: Date,
+    data?: Date,
     id?: number,
   ) {
     this.id = id

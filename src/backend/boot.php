@@ -69,14 +69,14 @@ if ($conn->query($sql) !== TRUE) {
 }
 
 $sql = "
-    CREATE TABLE pedidos (
+    CREATE TABLE IF NOT EXISTS pedidos (
         id INT PRIMARY KEY AUTO_INCREMENT,
         idEntidade INT NOT NULL,
         idItem INT NOT NULL,
         quantidade INT NOT NULL,
         nomeRecebedor VARCHAR(255) NOT NULL,
         telefoneRecebedor VARCHAR(20) NOT NULL,
-        data DATETIME NOT NULL,
+        data DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (idEntidade) REFERENCES entidades(id),
         FOREIGN KEY (idItem) REFERENCES itens(id)
     )

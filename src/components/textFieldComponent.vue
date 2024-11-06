@@ -10,6 +10,7 @@
     :placeholder="placeholder"
     :prefix="prefix"
     :rules="rules"
+    :disabled="disabled"
     :type="isPassword && !show ? 'password' : 'text'"
     :variant="variant"
     @click:append-inner="togglePasswordVisibility"
@@ -74,6 +75,10 @@
     hint: {
       type:String,
       default:''
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   })
 

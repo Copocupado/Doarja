@@ -20,6 +20,8 @@ declare module 'vue' {
     OptionsAdmins: typeof import('./components/CRUD_Administradores/optionsAdmins.vue')['default']
     OptionsCRUD: typeof import('./components/optionsCRUD.vue')['default']
     OptionsItems: typeof import('./components/CRUD_Itens/optionsItems.vue')['default']
+    PedidoCard: typeof import('./components/Pedidos/pedidoCard.vue')['default']
+    PedidoModifier: typeof import('./components/Pedidos/pedidoModifier.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ShowAllPedidos: typeof import('./components/Pedidos/showAllPedidos.vue')['default']
