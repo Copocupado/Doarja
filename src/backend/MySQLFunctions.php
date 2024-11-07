@@ -185,4 +185,48 @@ function verifyPasswords($hashedPassword, $password)
         ];
     }
 }
+
+function searchEntry($table, $searchCriteria = [], $orderBy = [])
+{
+    global $conn;
+
+    $table = $conn->real_escape_string($table);
+
+    $conditions = [];
+    foreach ($searchCriteria as $column => $value) {
+        $column = $conn->real_escape_string($column);
+        $value = $conn->real_escape_string($value);
+        $conditions[] = "$column LIKE '%$value%'";
+    }
+
+    $whereClause = implode(' AND ', $conditions);
+
+    $orderByClause = '';
+    if (!empty($orderBy)) {
+        $orderByParts = [];
+        foreach ($orderBy as $column => $direction) {
+            $column = $conn->real_escape_string($column);
+            $direction = strtoupper($direction) === 'DESC' ? 'DESC' : 'ASC';
+            $orderByParts[] = "$column $direction";
+        }
+        $orderByClause = ' ORDER BY ' . implode(', ', $orderByParts);
+    }
+
+    $query = "SELECT * FROM $table" . (count($conditions) > 0 ? " WHERE $whereClause" : '') . $orderByClause;
+
+    $result = $conn->query($query);
+
+    if ($result) {
+        $data = $result->fetch_all(MYSQLI_ASSOC);
+        return [
+            'success' => true,
+            'message' => $data,
+        ];
+    } else {
+        return [
+            'success' => false,
+            'message' => 'Erro ao buscar entrada: ' . $conn->error,
+        ];
+    }
+}
 ?>

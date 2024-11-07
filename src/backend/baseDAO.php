@@ -207,6 +207,10 @@ class ItemDAO extends BaseDAO
     protected function orderByParam(): array {
         return [];
     }
+
+    public function likeSearch($inputSearch): array {
+        return searchEntry($this->getTableName(), ['descricao' => $inputSearch]);
+    }
 }
 
 class PedidoDAO extends BaseDAO

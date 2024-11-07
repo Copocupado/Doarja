@@ -39,7 +39,7 @@
         router.push('/Entidade/login')
         break
       default:
-        router.push('/search')
+        router.push('/Doacoes/search')
     }
   }
 

@@ -36,6 +36,11 @@ if (isset($getAction)) {
             echo json_encode($response);
             break;
 
+        case 'searchLike':
+            $response = searchLike($getData['inputSearch']);
+            echo json_encode($response);
+            break;
+
         default:
             echo json_encode([
                 'success' => false,
@@ -62,6 +67,18 @@ if (isset($postAction)) {
     }
 }
 
+function searchLike($inputSearch){
+    global $itemDAO;
+
+    try {
+        return $itemDAO->likeSearch($inputSearch);
+    } catch (\Throwable $th) {
+        return [
+            'success' => false,
+            'message' => 'Exception: ' . $th->getMessage(),
+        ];
+    }
+}
 function getItem($item)
 {
     global $itemDAO;

@@ -25,6 +25,7 @@ declare module 'vue' {
     PessoasTable: typeof import('./components/Pessoas/pessoasTable.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SearchComponent: typeof import('./components/SearchSystem/SearchComponent.vue')['default']
     ShowAllPedidos: typeof import('./components/Pedidos/showAllPedidos.vue')['default']
     ShowPedidos: typeof import('./components/Pedidos/showPedidos.vue')['default']
     Snackbar: typeof import('./components/snackbar.vue')['default']
