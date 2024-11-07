@@ -1,7 +1,7 @@
 <?php
 include 'connection.php';
 
-function getEntry($table, $data)
+function getEntry($table, $data, $orderBy = [])
 {
     global $conn;
 
@@ -13,10 +13,21 @@ function getEntry($table, $data)
         $value = $conn->real_escape_string($value);
         $conditions[] = "$column = '$value'";
     }
-    
+
     $whereClause = implode(' AND ', $conditions);
-    
-    $query = "SELECT * FROM $table" . (count($conditions) > 0 ? " WHERE $whereClause" : '');
+
+    $orderByClause = '';
+    if (!empty($orderBy)) {
+        $orderByParts = [];
+        foreach ($orderBy as $column => $direction) {
+            $column = $conn->real_escape_string($column);
+            $direction = strtoupper($direction) === 'DESC' ? 'DESC' : 'ASC';
+            $orderByParts[] = "$column $direction";
+        }
+        $orderByClause = ' ORDER BY ' . implode(', ', $orderByParts);
+    }
+
+    $query = "SELECT * FROM $table" . (count($conditions) > 0 ? " WHERE $whereClause" : '') . $orderByClause;
 
     $result = $conn->query($query);
 

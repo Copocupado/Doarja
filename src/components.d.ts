@@ -22,6 +22,7 @@ declare module 'vue' {
     OptionsItems: typeof import('./components/CRUD_Itens/optionsItems.vue')['default']
     PedidoCard: typeof import('./components/Pedidos/pedidoCard.vue')['default']
     PedidoModifier: typeof import('./components/Pedidos/pedidoModifier.vue')['default']
+    PessoasTable: typeof import('./components/Pessoas/pessoasTable.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ShowAllPedidos: typeof import('./components/Pedidos/showAllPedidos.vue')['default']

@@ -5,7 +5,7 @@ class PedidoDAO extends BaseDAO<Pedido> {
   protected endpoint = 'DAOs/pedidoDAO.php'
 
   protected createInstance (data: any): Pedido {
-    return new Pedido(data.idEntidade, data.idItem, data.quantidade, data.nomeRecebedor, data.telefoneRecebedor, data.data, data.id)
+    return new Pedido(data.idEntidade, data.idItem, data.idPessoa, data.quantidade, data.data, data.id)
   }
 }
 

@@ -56,7 +56,7 @@ abstract class BaseDAO
     public function read($item): array
     {
         try {
-            $response = getEntry($this->getTableName(), $item);
+            $response = getEntry($this->getTableName(), $item, $this->orderByParam());
 
             if (!$response['success']) {
                 return $response;
@@ -161,6 +161,9 @@ class AdminDAO extends BaseDAO
     {
         return 'email';
     }
+    protected function orderByParam(): array {
+        return [];
+    }
 }
 
 class EntidadeDAO extends BaseDAO
@@ -178,6 +181,9 @@ class EntidadeDAO extends BaseDAO
     protected function mainField(): string
     {
         return 'id';
+    }
+    protected function orderByParam(): array {
+        return [];
     }
 
 }
@@ -198,6 +204,9 @@ class ItemDAO extends BaseDAO
     {
         return 'id';
     }
+    protected function orderByParam(): array {
+        return [];
+    }
 }
 
 class PedidoDAO extends BaseDAO
@@ -215,6 +224,31 @@ class PedidoDAO extends BaseDAO
     protected function mainField(): string
     {
         return 'id';
+    }
+    protected function orderByParam(): array {
+        return ['data' => 'DESC'];
+    }
+}
+
+class PessoaDAO extends BaseDAO
+{
+    protected function getTableName(): string
+    {
+        return 'pessoas';
+    }
+    
+    protected function getRole(): string
+    {
+        return 'pessoa';
+    }
+
+    protected function mainField(): string
+    {
+        return 'id';
+    }
+
+    protected function orderByParam(): array {
+        return [];
     }
 }
 

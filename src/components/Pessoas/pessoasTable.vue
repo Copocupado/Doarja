@@ -2,11 +2,11 @@
   <v-container class="d-flex flex-column ga-5">
     <div class="d-flex justify-space-between align-center">
       <div class="d-flex">
-        <div class="text-h4 font-weight-medium text-primary">Entidades</div>
+        <div class="text-h4 font-weight-medium text-primary">Pessoas</div>
         <v-chip class="ma-2" color="primary" label>
-          <v-icon icon="mdi-account-hard-hat" start />
-          <div v-if="entidadeList != null">
-            {{ entidadeList.length }} {{ entidadeList.length > 1 ? 'Entidades' : 'Entidade' }}
+          <v-icon icon="mdi-account-circle" start />
+          <div v-if="pessoasList != null">
+            {{ pessoasList.length }} {{ pessoasList.length > 1 ? 'Pessoas' : 'Pessoa' }}
           </div>
         </v-chip>
       </div>
@@ -28,19 +28,10 @@
       <template
         #item="{ item }"
       >
-        <tr class="hoverable-row" style="cursor: pointer;" @click="()=>showItems(item)">
-          <!-- Row content here -->
+        <tr class="hoverable-row" style="cursor: pointer;" @click="()=>selectedItem(item)">
           <td>{{ item.id }}</td>
           <td class="text-end">{{ item.nome }}</td>
-          <td class="text-end">{{ item.endereco }}</td>
           <td class="text-end">{{ item.telefone }}</td>
-          <td>
-            <OptionsCRUD
-              :item="item"
-              @delete="deleteEntidade"
-              @update="handleUpdate"
-            />
-          </td>
         </tr>
       </template>
       <template #tfoot>
@@ -59,13 +50,12 @@
     </v-data-table-server>
   </v-container>
   <Snackbar :snackbar="snackbar" :snackbar-color="snackbarColor" :snackbar-text="snackbarText" @close="snackbar = false" />
-  <EntidadeModifier :item="itemToUpdate" :model-value="showUpdateEntidade" @updated="updateTable" @dismissed="showUpdateEntidade = false"></EntidadeModifier>
   <v-dialog
-    v-model="showEntidadeItems"
-    width="auto"
+    v-model="showPedidos"
+    width="fill-width"
   >
     <v-container class="bg-background rounded-lg">
-      <TableItens :currently-authed-entidade="itemToUpdate!" />
+      <ShowPedidos :currently-authed-pessoa="selectedPessoa"></ShowPedidos>
     </v-container>
   </v-dialog>
 </template>
@@ -73,24 +63,17 @@
 <script lang="ts" setup>
   import { reactive, ref, watch } from 'vue'
   import Snackbar from '../snackbar.vue'
-  import { Entidade } from '@/models/Entidade/entidade'
-  import { entidadeDAO } from '@/models/Entidade/entidadeDAO'
-  import { Admin } from '@/models/Admins/admin';
+  import { Pessoa } from '@/models/Pessoas/Pessoa'
+  import { pessoaDAO } from '@/models/Pessoas/PessoaDAO'
 
-  const props = defineProps<{
-  currentlyAuthedAdmin: Admin,
-}>()
-
-  const showEntidadeItems = ref(false)
-
-  const showUpdateEntidade = ref(false)
-  let itemToUpdate = ref<Entidade | null>(null)
+  const showPedidos = ref(false)
+  let selectedPessoa = null
 
   const snackbar = ref(false)
   let snackbarText = ''
   let snackbarColor = ''
 
-  const entidadeList = ref<Entidade[] | null>(null)
+  const pessoasList = ref<Pessoa[] | null>(null)
   const itemsPerPage = ref(10)
   const headers = reactive([
     {
@@ -100,14 +83,7 @@
       key: 'id',
     },
     { title: 'Nome', key: 'nome', align: 'end' },
-    { title: 'Endereço', key: 'endereco', align: 'end' },
     { title: 'Telefone', key: 'telefone', align: 'end' },
-    {
-      title: 'Opções',
-      align: 'end',
-      key: 'opcoes',
-      sortable: false,
-    },
   ])
 
   const serverItems = ref([])
@@ -119,8 +95,8 @@
     loadItems({ page: 1, itemsPerPage: itemsPerPage.value, sortBy: [] })
   })
 
-  async function getEntidades () {
-    const response = await entidadeDAO.fetchAll()
+  async function getPessoas () {
+    const response = await pessoaDAO.fetchAll({})
     if (response.success != undefined && response.success === false) {
       showSnackbar(response)
       return
@@ -135,12 +111,12 @@
   }
 
   async function populateTable ({ page, itemsPerPage, sortBy, search }: { page: number; itemsPerPage: number; sortBy: Array<{ key: string; order: string }>; search: string }): Promise<void> {
-    entidadeList.value = await getEntidades()
+    pessoasList.value = await getPessoas()
 
     const start = (page - 1) * itemsPerPage
     const end = start + itemsPerPage
 
-    const items = entidadeList.value!.slice().filter((item: Entidade) => {
+    const items = pessoasList.value!.slice().filter((item: Pessoa) => {
       return search ? item.nome.toLowerCase().includes(search.toLowerCase()) : true
     })
 
@@ -161,23 +137,9 @@
     totalItems.value = items.length
   }
 
-  async function deleteEntidade(item: Entidade) {
-      const response = await entidadeDAO.delete(item)
-      await loadItems({ page: 1, itemsPerPage: itemsPerPage.value, sortBy: [] })
-      showSnackbar(response)
-  }
-  async function handleUpdate(item: Entidade) {
-      itemToUpdate = item
-      showUpdateEntidade.value = true
-  }
-  async function updateTable(message: object){
-      showUpdateEntidade.value = false
-      await loadItems({ page: 1, itemsPerPage: itemsPerPage.value, sortBy: [] })
-      showSnackbar({success: true, message: 'Entidade atualizada com sucesso'})
-  }
-  function showItems(item: Entidade){
-    itemToUpdate = item
-    showEntidadeItems.value=true
+  function selectedItem(item: Pessoa){
+    selectedPessoa = item
+    showPedidos.value = true
   }
 
   function showSnackbar (response: object) {

@@ -69,16 +69,29 @@ if ($conn->query($sql) !== TRUE) {
 }
 
 $sql = "
+    CREATE TABLE IF NOT EXISTS pessoas (
+        id INT PRIMARY KEY AUTO_INCREMENT,
+        nome VARCHAR(255) NOT NULL,
+        telefone VARCHAR(20) NOT NULL
+    )
+";
+
+if ($conn->query($sql) !== TRUE) {
+    $response["success"] = false;
+    $response["message"] = "Erro ao criar a tabela 'pessoas': " . $conn->error;
+}
+
+$sql = "
     CREATE TABLE IF NOT EXISTS pedidos (
         id INT PRIMARY KEY AUTO_INCREMENT,
         idEntidade INT NOT NULL,
         idItem INT NOT NULL,
+        idPessoa INT NOT NULL,
         quantidade INT NOT NULL,
-        nomeRecebedor VARCHAR(255) NOT NULL,
-        telefoneRecebedor VARCHAR(20) NOT NULL,
         data DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (idEntidade) REFERENCES entidades(id),
-        FOREIGN KEY (idItem) REFERENCES itens(id)
+        FOREIGN KEY (idItem) REFERENCES itens(id),
+        FOREIGN KEY (idPessoa) REFERENCES pessoas(id)
     )
 ";
 

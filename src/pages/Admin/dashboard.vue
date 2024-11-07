@@ -6,6 +6,7 @@
           :menu-items="[
             { title: 'Administradores', icon: 'mdi-account-hard-hat', value: 'administradores' },
             { title: 'Entidades', icon: 'mdi-store', value: 'entidades' },
+            { title: 'Pessoas', icon: 'mdi-account-circle', value: 'pessoas' },
           ]"
           :selected-section="selectedSection"
           :user-main-info="admin.nome"
@@ -22,7 +23,6 @@
           </div>
         </v-container>
       </v-col>
-
     </v-row>
   </v-app>
 </template>
@@ -31,8 +31,9 @@
   import Navbar from '@/components/Navbar/Navbar.vue'
   import AdminTable from '@/components/CRUD_Administradores/tableAdmins.vue'
   import EntidadeTable from '@/components/CRUD_Entidades/tableEntidades.vue'
+  import PessoaTable from '@/components/Pessoas/pessoasTable.vue'
 
-  import { onMounted, ref } from 'vue'
+  import { onMounted, ref, computed } from 'vue'
   import router from '@/router'
   import { getSessionData } from '@/models/utility_classes'
   import { Admin } from '@/models/Admins/admin'
@@ -51,6 +52,8 @@
         return AdminTable
       case 'entidades':
         return EntidadeTable
+      case 'pessoas':
+        return PessoaTable
       default:
         return ''
     }

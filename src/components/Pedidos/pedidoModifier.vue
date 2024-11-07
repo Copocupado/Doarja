@@ -70,6 +70,8 @@ import { Item } from '@/models/Itens/itens';
 import { itemDAO } from '@/models/Itens/itensDAO';
 import { Pedido } from '@/models/Pedidos/Pedido';
 import { pedidoDAO } from '@/models/Pedidos/PedidosDAO';
+import { Pessoa } from '@/models/Pessoas/Pessoa';
+import { pessoaDAO } from '@/models/Pessoas/PessoaDAO';
 import { ValidationRules } from '@/rules';
 import { ref, computed, onMounted } from 'vue';
 
@@ -135,16 +137,26 @@ function onItemSelected(selectedItem: string){
 
 async function onSubmit() {
   isLoading.value = true
-  let response = await pedidoDAO.create(
+  let answear = await pessoaDAO.read({nome: nomeRecebedor.value, telefone: telefoneRecebedor.value}) as Array<Pessoa>
+
+  if(answear.length == 0) {
+
+    const newPessoa = new Pessoa(nomeRecebedor.value, telefoneRecebedor.value)
+    await pessoaDAO.create(newPessoa)
+  }
+
+  let response = await pessoaDAO.read({nome: nomeRecebedor.value, telefone: telefoneRecebedor.value})as Array<Pessoa>
+  const pessoaCadastrada = response[0]
+
+  response = await pedidoDAO.create(
     new Pedido(
       props.currentlyAuthedEntidade.id!,
       selectedItemID!,
+      pessoaCadastrada.id!,
       Number(quantidade.value),
-      nomeRecebedor.value,
-      telefoneRecebedor.value,
     )
   )
-  console.log(response)
+
   let itemToUpdate: Item | null = null;
 
   props.itemsList.forEach(item => {
@@ -158,8 +170,9 @@ async function onSubmit() {
       )
     }
   });
+
   response = await itemDAO.update(itemToUpdate!)
-  console.log(response)
+
   isLoading.value = false
   emit('added', response)
 }
