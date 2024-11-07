@@ -13,7 +13,7 @@
       <template #loader>
         <v-progress-linear
           :active="loading"
-          color="secondary"
+          color="primary"
           :model-value="0"
           height="7"
           indeterminate
