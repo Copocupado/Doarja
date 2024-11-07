@@ -26,19 +26,15 @@
         <v-container v-if="shouldShowErrorMessage" class="d-flex justify-center text-error font-weight-bold">{{ errorMessageText }}</v-container>
       </v-container>
     </v-container>
-    <Snackbar :snackbar="snackbar" :snackbar-color="snackbarColor" :snackbar-text="snackbarText" @close="snackbar = false" />
   </div>
 </template>
 <script lang="ts" setup>
-  import { onMounted, ref } from 'vue'
+  import { ref } from 'vue'
   import router from '@/router'
   import { saveSessionData } from '@/models/utility_classes'
   import { adminDAO } from '@/models/Admins/adminDAO'
   import { ValidationRules } from '@/rules'
 
-  const snackbar = ref(false)
-  let snackbarText = ''
-  let snackbarColor = ''
 
   const isValid = ref(false)
 
@@ -53,24 +49,6 @@
   const isLoading = ref(false)
   const shouldShowErrorMessage = ref(false)
   let errorMessageText = ''
-
-  function showSnackbar (response: object) {
-    snackbarColor = response.success ? 'success' : 'error'
-    snackbarText = response.message
-    snackbar.value = true
-  }
-
-  onMounted(async () => {
-    const response = await adminDAO.isItem()
-    console.log(response)
-    if (!response.success) {
-      showSnackbar(response)
-      return
-    }
-    if (response.message) {
-      router.push('/Admin/dashboard')
-    }
-  })
 
   async function onSubmit () {
     if (!isValid.value) return

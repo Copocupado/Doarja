@@ -32,5 +32,6 @@ declare module 'vue' {
     TableEntidades: typeof import('./components/CRUD_Entidades/tableEntidades.vue')['default']
     TableItens: typeof import('./components/CRUD_Itens/tableItens.vue')['default']
     TextFieldComponent: typeof import('./components/textFieldComponent.vue')['default']
+    UpdateAdmin: typeof import('./components/CRUD_Administradores/updateAdmin.vue')['default']
   }
 }

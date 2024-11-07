@@ -43,11 +43,11 @@
         </div>
       </template>
       <template #item.opcoes="{ item }">
-        <OptionsAdmins
+        <OptionsCRUD
           v-if="shouldDisplayOptions(item)"
-          :admin="item"
-          @delete-admin="deleteAdministrator"
-          @update-admin="updateAdministrator"
+          :item="item"
+          @delete="deleteAdministrator"
+          @update="handleUpdate"
         />
       </template>
       <template #tfoot>
@@ -66,11 +66,11 @@
     </v-data-table-server>
   </v-container>
   <Snackbar :snackbar="snackbar" :snackbar-color="snackbarColor" :snackbar-text="snackbarText" @close="snackbar = false" />
+  <UpdateAdmin v-if="adminToUpdate!=null" :model-value="showAdminToUpdate" :admin-to-update="adminToUpdate" @update="updateAdministrator" @close="updateDialogDismissed"/>
 </template>
 
 <script lang="ts" setup>
   import { reactive, ref, watch } from 'vue'
-  import OptionsAdmins from './optionsAdmins.vue'
   import Snackbar from '../snackbar.vue'
   import { Admin } from '@/models/Admins/admin'
   import { adminDAO } from '@/models/Admins/adminDAO'
@@ -78,6 +78,9 @@
   const props = defineProps<{
     currentlyAuthedAdmin: Admin,
   }>()
+
+  const showAdminToUpdate = ref(false)
+  const adminToUpdate = ref<Admin | null>(null)
 
   const snackbar = ref(false)
   let snackbarText = ''
@@ -180,9 +183,17 @@
 
     showSnackbar(response)
   }
-  async function updateAdministrator (admin: Admin, value: boolean) {
-    const newAdmin = new Admin(admin.email, admin.senha, admin.nome, value, admin.foto_de_perfil)
-    const response = await adminDAO.update(newAdmin)
+
+  function handleUpdate(item: Admin){
+    adminToUpdate.value = item
+    showAdminToUpdate.value = true
+  }
+  function updateDialogDismissed(){
+    showAdminToUpdate.value = false
+  }
+  async function updateAdministrator (admin: Admin) {
+    showAdminToUpdate.value = false
+    const response = await adminDAO.update(admin)
 
     await loadItems({ page: 1, itemsPerPage: itemsPerPage.value, sortBy: [] })
     showSnackbar(response)

@@ -29,11 +29,10 @@
         <v-container v-if="shouldShowErrorMessage" class="d-flex justify-center text-error font-weight-bold">{{ errorMessageText }}</v-container>
       </v-container>
     </v-container>
-    <Snackbar :snackbar="snackbar" :snackbar-color="snackbarColor" :snackbar-text="snackbarText" @close="snackbar = false" />
   </div>
 </template>
 <script lang="ts" setup>
-  import { ref } from 'vue'
+  import { ref, computed } from 'vue'
   import router from '@/router'
   import { ValidationRules } from '@/rules'
   import { entidadeDAO } from '@/models/Entidade/entidadeDAO'
@@ -85,24 +84,6 @@
     isLoading.value = false
   }
 
-  onMounted(async () => {
-    const response = await entidadeDAO.isItem()
-    if (!response.success) {
-      showSnackbar(response)
-      return
-    }
-    router.push('/Entidade/dashboard')
-  })
-
-  const snackbar = ref(false)
-  let snackbarText = ''
-  let snackbarColor = ''
-
-  function showSnackbar (response: object) {
-    snackbarColor = response.success ? 'success' : 'error'
-    snackbarText = response.message
-    snackbar.value = true
-  }
 </script>
 <style scoped>
   .responsive-background {

@@ -186,6 +186,12 @@ function updateAdmin($admin)
 
         $admin['ativo'] = isset($admin['ativo']) && $admin['ativo'] ? 1 : 0;
 
+        if($admin['senha'] == '') {
+            unset($admin['senha']);
+        } else {
+            $admin['senha'] = password_hash($admin['senha'], PASSWORD_BCRYPT);
+
+        }
         return $adminDAO->update($admin);
 
     } catch (\Throwable $th) {

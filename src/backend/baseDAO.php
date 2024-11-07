@@ -121,11 +121,11 @@ abstract class BaseDAO
     {
         try {
             $response = getSessionData();
+
             if (!$response['success']) {
                 return $response;
             }
-
-            $data = $response['message'];
+            $data = $response['message'] ?? null;
             if ($data == null) {
                 return [
                     'success' => true,

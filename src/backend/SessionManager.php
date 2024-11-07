@@ -64,7 +64,7 @@ function getSessionData()
         } else {
             return [
                 'success' => false,
-                'message' => 'No session data found.'
+                'message' => 'Login não encontrado'
             ];
         }
     } catch (\Throwable $th) {

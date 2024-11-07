@@ -10,19 +10,34 @@
             v-model="form"
             class="d-flex flex-column ga-3"
           >
-            <v-text-field v-model="name" label="Nome" :rules="[rules.required]" variant="outlined" />
-            <v-text-field v-model="email" label="Email" :rules="[rules.required, rules.validEmail]" variant="outlined" />
-            <v-text-field
+            <TextFieldComponent
+              v-model="name"
+              icon="mdi-account-tie"
+              label="Nome"
+              placeholder="Fulano"
+              :rules="rules.nameRules"
+              @update-model-value="(newValue: string) => name = newValue"
+            />
+            <TextFieldComponent
+              v-model="email"
+              icon="mdi-email"
+              label="Email"
+              placeholder="fulano@gmail.com"
+              :rules="rules.emailRules"
+              @update-model-value="(newValue: string) => email = newValue"
+            />
+            <TextFieldComponent
               v-model="password"
-              :append-inner-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+              icon="mdi-lock"
+              :isPassword="true"
               label="Senha"
-              :rules="[rules.required]"
-              :type="show ? 'text' : 'password'"
-              variant="outlined"
-              @click:append-inner="show = !show"
+              :rules="rules.passwordRules"
+              @update-model-value="(newValue: string) => password = newValue"
             />
             <v-checkbox
               v-model="active"
+              color="primary"
+              class="text-primary"
               label="Ativar administrador"
             />
           </v-form>
@@ -43,25 +58,22 @@
   </v-dialog>
 </template>
 <script lang="ts" setup>
-  import { ref } from 'vue'
+  import { ValidationRules } from '@/rules';
+import { ref, computed } from 'vue'
 
   // eslint-disable-next-line func-call-spacing
   const emit = defineEmits<{
     (e: 'add-administrador', name: string, email: string, password: string, isActive: boolean): void
   }>()
 
+  const rulesUpdate = computed(() => {
+    return new ValidationRules(password.value)
+  })
+  const rules = computed(() => rulesUpdate.value)
+
   const form = ref(false)
   const name = ref('')
   const email = ref('')
   const password = ref('')
-  const show = ref(false)
   const active = ref(false)
-
-  const rules = {
-    required: (value: string) => value.length > 0 || 'Campo necessário',
-    validEmail: (value: string) => {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      return emailRegex.test(value) || 'Insira um e-mail válido'
-    },
-  }
 </script>
