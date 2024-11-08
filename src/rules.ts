@@ -21,9 +21,9 @@ class ValidationRules {
   }
 
   private validEmail = (message: string) => (value: string) => {
-    if (value === 'root') return true
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    return emailPattern.test(value) || message
+    if (value === 'root') return true;
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailPattern.test(value) || message;
   }
 
   private validFile = (maxSize: number, message: string) => (value: File | null) => {
@@ -77,7 +77,7 @@ class ValidationRules {
   get emailRules () {
     return [
       this.required('O email é obrigatório.'),
-      this.validEmail('O email deve ser válido ou "root".'),
+      this.validEmail('O email deve ser válido'),
     ]
   }
 

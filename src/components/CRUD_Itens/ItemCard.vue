@@ -67,8 +67,6 @@
     item: Item
   }>()
 
-  console.log(props.item)
-
   const fetchingInfo = ref(false)
 
   const reveal= ref(false)
@@ -78,7 +76,6 @@
   async function getEntidade() {
     const response = await entidadeDAO.read({id: props.item.idEntidade}) as Array<Entidade>
     entidade.value=response.message
-    console.log(entidade.value)
   }
 
   onMounted(async () => {

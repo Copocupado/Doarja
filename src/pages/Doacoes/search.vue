@@ -41,6 +41,5 @@
   function updatePedidoDisplay(pedidosList: Array<Pedido>){
     firstSearch.value = false
     searchResult.value = pedidosList
-    console.log(pedidosList)
   }
 </script>

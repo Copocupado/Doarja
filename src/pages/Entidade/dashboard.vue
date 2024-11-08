@@ -67,6 +67,7 @@
 
   onMounted(async () => {
     const response = await getSessionData()
+    console.log(response)
     if (!response.success) {
       router.push('/Entidade/login')
       return

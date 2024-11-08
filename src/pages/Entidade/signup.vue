@@ -13,6 +13,14 @@
             @update-model-value="(newValue: string) => name = newValue"
           />
           <TextFieldComponent
+            v-model="email"
+            icon="mdi-email"
+            label="Email"
+            placeholder="fulano@gmail.com"
+            :rules="rules.emailRules"
+            @update-model-value="(newValue: string) => email = newValue"
+          />
+          <TextFieldComponent
             v-model="password"
             icon="mdi-lock"
             :isPassword="true"
@@ -66,6 +74,7 @@
   const isValid = ref(false)
 
   const name = ref('')
+  const email = ref('')
   const password = ref('')
   const confirmPassword = ref('')
   const address = ref('')
@@ -87,7 +96,7 @@
 
     isLoading.value = true
     try {
-      const response = await entidadeDAO.create(new Entidade(name.value, password.value, address.value, phone.value))
+      let response = await entidadeDAO.create(new Entidade(name.value, password.value, address.value, phone.value))
       errorMessageText = response.message
       messageClass = response.success ? 'text-success' : 'text-error'
       shouldShowErrorMessage.value = true
@@ -98,6 +107,7 @@
         shouldShowErrorMessage.value = false
       }, 3000)
       if (response.success) {
+        response = await entidadeDAO.read({nome: name.value})
         try {
           await saveSessionData({ role: 'entidade', ...response.message })
         } catch (error) {

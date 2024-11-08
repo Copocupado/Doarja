@@ -78,8 +78,8 @@
   import { Admin } from '@/models/Admins/admin';
 
   const props = defineProps<{
-  currentlyAuthedAdmin: Admin,
-}>()
+    currentlyAuthedAdmin: Admin,
+  }>()
 
   const showEntidadeItems = ref(false)
 
