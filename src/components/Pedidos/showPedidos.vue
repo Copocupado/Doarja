@@ -100,7 +100,7 @@
   }
 
   async function fetchItems(){
-    itemsList.value = await itemDAO.read({ idEntidade: props.currentlyAuthedEntidade.id, disponivel: 1 })
+    itemsList.value = await itemDAO.read({ idEntidade: props.currentlyAuthedEntidade.id })
   }
 
   function showSnackbar (response: object) {

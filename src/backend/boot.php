@@ -41,6 +41,7 @@ $sql = "
     CREATE TABLE IF NOT EXISTS entidades (
         id INT AUTO_INCREMENT PRIMARY KEY,
         nome VARCHAR(255) NOT NULL UNIQUE,
+        email VARCHAR(255) NOT NULL UNIQUE,
         senha VARCHAR(255) NOT NULL,
         endereco VARCHAR(255) NOT NULL,
         telefone VARCHAR(15) NOT NULL

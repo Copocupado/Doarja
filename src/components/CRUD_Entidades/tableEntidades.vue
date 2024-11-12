@@ -64,8 +64,8 @@
     v-model="showEntidadeItems"
     width="auto"
   >
-    <v-container class="bg-background rounded-lg">
-      <TableItens :currently-authed-entidade="itemToUpdate!" />
+    <v-container class="bg-background rounded-lg h-100 w-100">
+      <Dashboard v-if="itemToUpdate != null" :currently-authed-entidade="itemToUpdate"/>
     </v-container>
   </v-dialog>
 </template>

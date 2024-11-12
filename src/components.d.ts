@@ -10,6 +10,7 @@ declare module 'vue' {
     AddAdmin: typeof import('./components/CRUD_Administradores/addAdmin.vue')['default']
     BtnComponent: typeof import('./components/btnComponent.vue')['default']
     ConfirmationComponent: typeof import('./components/confirmationComponent.vue')['default']
+    Dashboard: typeof import('./components/CRUD_Entidades/dashboard.vue')['default']
     EntidadeModifier: typeof import('./components/CRUD_Entidades/entidadeModifier.vue')['default']
     FileFieldComponent: typeof import('./components/fileFieldComponent.vue')['default']
     HoverBoxComponent: typeof import('./components/Hover-box/hoverBoxComponent.vue')['default']
